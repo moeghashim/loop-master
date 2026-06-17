@@ -1,0 +1,32 @@
+name: dispatch-poll
+# Stage 1 — the dispatcher's scheduled tick. Lists Status=Ready issues on the Project
+# board and triages each (triage.sh is idempotent). Reads the board with PROJECTS_TOKEN
+# (the default GITHUB_TOKEN can't read user Projects). Also runnable on demand.
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Poll Ready issues and triage
+        env:
+          GH_TOKEN: ${{ secrets.PROJECTS_TOKEN }}
+          PROJECT_OWNER: ${{ vars.PROJECT_OWNER }}
+          PROJECT_NUMBER: ${{ vars.PROJECT_NUMBER }}
+        run: |
+          if [ -z "${PROJECT_OWNER}" ] || [ -z "${PROJECT_NUMBER}" ]; then
+            echo "PROJECT_OWNER/PROJECT_NUMBER not set — skipping poll."; exit 0
+          fi
+          if [ -z "${GH_TOKEN}" ]; then
+            echo "PROJECTS_TOKEN not set — skipping poll."; exit 0
+          fi
+          bash scripts/dispatch-poll.sh --owner "$PROJECT_OWNER" --project "$PROJECT_NUMBER" --repo "${{ github.repository }}"

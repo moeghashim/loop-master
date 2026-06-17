@@ -35,9 +35,9 @@ labels="$(jq -r '.labels[].name' <<<"$issue_json")"
 title="$(jq -r '.title' <<<"$issue_json")"
 has() { printf '%s\n' "$labels" | grep -qx "$1"; }
 
-# Idempotency: never re-triage an issue that already has a cast.
-if printf '%s\n' "$labels" | grep -q '^exec:'; then
-  echo "triage: #$ISSUE already cast — skipping."; exit 0
+# Idempotency: skip if already cast (exec:*) or already proposed (needs:cast).
+if printf '%s\n' "$labels" | grep -qE '^exec:|^needs:cast$'; then
+  echo "triage: #$ISSUE already triaged — skipping."; exit 0
 fi
 
 work_type="feature"
@@ -114,6 +114,9 @@ BODY
 if [ "$mode" = "auto" ]; then
   gh issue edit "$ISSUE" --repo "$REPO" --add-label "exec:${executor}"
   if [ -n "$reviewer" ]; then gh issue edit "$ISSUE" --repo "$REPO" --add-label "review:${reviewer}"; fi
+else
+  # confirm: mark the issue so a repeated poll doesn't re-propose every tick.
+  gh issue edit "$ISSUE" --repo "$REPO" --add-label "needs:cast"
 fi
 gh issue comment "$ISSUE" --repo "$REPO" --body "$body"
 echo "triage: #$ISSUE -> ${mode}: ${cast} (${shape})"
