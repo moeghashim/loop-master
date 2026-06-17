@@ -30,6 +30,12 @@ work one question at a time, resolves terms against this file, verifies claims a
 code, and writes the plan. Runs only when an issue needs planning (Inbox); a well-specified
 issue skips it and starts Ready.
 
+### Dispatch mode
+Per-issue choice, **set at the [interview](#interview)**, for how the [dispatcher](#dispatcher)
+acts once the issue is Ready: `dispatch:auto` (assign the [cast](#cast) and trigger the tool
+immediately) or `dispatch:confirm` (propose the cast and wait for your confirmation). Default
+when absent: `confirm`.
+
 ### Sub-loop
 A **child issue** spawned by an agent *during* a [loop](#loop), and itself a full
 [loop](#loop). Implemented as a GitHub **sub-issue** (parent ↔ child). There is no special
@@ -48,12 +54,17 @@ The agents assigned to one issue for its roles: an [executor](#executor) and, on
 is the *aggregate* that informs it).
 
 ### Executor
-The assigned **vendor app** (Claude / Codex / Cursor) that produces the diff and opens the
-PR, running in its own app where you can jump in. Never claims the gate.
+The assigned **vendor app** (one of the [roster](#roster)) that produces the diff and opens
+the PR, running in its own app where you can jump in. Never claims the gate.
 
 ### Reviewer
 A **different** vendor app that signs off on the PR. Present only on the
 [reviewed](#reviewed) shape.
+
+### Roster
+The vendor tools that can be [cast](#cast): **Codex, Claude Code, Cursor, Pi, Factory, Amp.**
+Each can play [executor](#executor) or [reviewer](#reviewer); a [reviewed](#reviewed) issue's
+reviewer is always a *different* tool than its executor.
 
 ### Gate
 `make verify` run as a **required CI check**. Exit 0 is the only mechanical signal that can

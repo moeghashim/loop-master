@@ -20,7 +20,7 @@ mechanical gate give single-issue safety with no bespoke daemon.
 | Piece | Runtime | Responsibility |
 |---|---|---|
 | Dispatcher | GitHub Actions | triage decision, reviewer re-trigger, unblock, merge-gate |
-| Execution | vendor app (Claude / Codex / Cursor) | the diff + PR; you can jump into the live session |
+| Execution | vendor app — the [roster](CONTEXT.md#roster) | the diff + PR; you can jump into the live session |
 | Gate | CI (Actions) | `make verify` as a required check |
 | Learning loop | scheduled Action | nightly grader → ratings → `routing.json` |
 
@@ -51,15 +51,16 @@ reviewer = argmax_recent(reviewer_role, work_type)       # a DIFFERENT tool, onl
 
 The presence of `review:` **is** the shape — nothing else to encode. Cold start (empty
 `routing.json`): everything non-trivial is reviewed; `type:chore`/`p3` may go solo. As
-ratings accumulate, proven executors earn the right to run solo. Triage may auto-assign or
-propose-and-confirm (post the cast as a comment, you apply it); default is auto-assign with
-human override.
+ratings accumulate, proven executors earn the right to run solo. The issue's
+[dispatch mode](CONTEXT.md#dispatch-mode) (set at the interview) decides what happens next:
+`dispatch:auto` assigns the cast and triggers the tool; `dispatch:confirm` posts the proposed
+cast and waits for you. Default when absent: confirm.
 
 ## The Actions
 
-1. **Triage dispatcher** — on an issue entering Ready: run the policy above, write cast
-   labels, move the board to In Progress (via `gh-stage.sh`), and trigger the executor's
-   vendor automation (assignment / mention).
+1. **Triage dispatcher** — on an issue entering Ready: run the policy above and write cast
+   labels. If `dispatch:auto`, move the board to In Progress (via `gh-stage.sh`) and trigger
+   the executor's vendor automation; if `dispatch:confirm`, post the proposed cast and wait.
 2. **Reviewer re-trigger** — on PR opened/ready that closes an issue carrying `review:<tool>`:
    trigger that reviewer's vendor automation. Solo issues have no `review:` label → straight
    to you.
