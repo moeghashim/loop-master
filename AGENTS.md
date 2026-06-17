@@ -1,65 +1,93 @@
 # AGENTS.md — coding-agent contract
 
-GitHub is the source of truth. **Labels are canonical**; the Project board is a
-**derived view** kept in sync by automation. You write labels, comments, branches,
-and PRs. You **never read or write Project fields** (Status / Priority) — automation
-moves the board. Your only judgment writes are **CLAIM** and **BLOCK**.
+GitHub is the source of truth. **Labels are canonical**; the Project board is a **derived
+view** kept in sync by automation. You write labels, comments, branches, and PRs. You
+**never read or write Project fields** (Status / Priority) — automation moves the board.
 
-## How you get work
+**The one rule.** Nothing is "done" on your word. Only a **mechanical signal** — `make
+verify` green in CI (exit 0) or a merged PR — turns work green. Every other claim is
+unverified until a mechanical fact confirms it.
 
-You work the **one issue you were dispatched to** — the issue number you were invoked
-on. You do **not** self-select from the board, and you do **not** gate on any "Ready"
-signal. Dispatch is out of band: the human (or a dispatcher) invoked you on this issue,
-which is what guarantees exactly one agent per issue.
+**Vocabulary.** Terms here — loop, sub-loop, interview, cast, gate, dispatcher,
+solo/reviewed, block — are canonical in [CONTEXT.md](CONTEXT.md). One name, one meaning.
+Resolve any new or ambiguous term there (via the interview) before using it.
 
-## CLAIM — your "I'm starting" write
+## How you're dispatched
 
-1. Add the label `agent:<you>` (one of `agent:codex`, `agent:claude`, `agent:pi`,
-   `agent:amp`).
-2. If you have your **own** GitHub identity, also assign yourself, then re-read the
-   issue; if it is assigned to anyone other than you, **yield** — remove your label and
-   assignment and stop. (With a shared identity this re-read is a no-op; single dispatch
-   already guarantees you are alone on this issue, so the label is the claim marker.)
+You do **not** self-select work. The [dispatcher](CONTEXT.md#dispatcher) (a GitHub Action)
+assigns the [cast](CONTEXT.md#cast) at triage by writing labels. **You act only on your own
+label** — `exec:<you>` or `review:<you>`. One label per role per issue means exactly one tool
+works it: the label is both your claim and the lock. Before starting, check for an existing
+branch / PR / `run:active` — **resume, don't duplicate**.
 
-Adding `agent:<you>` triggers automation that moves the board to **In Progress**. You
-never set Status yourself.
+## Your role is in your label
 
-## Do the work
+### Interview / planner — the front door
+Before an issue is Ready, the [interview](CONTEXT.md#interview) (grill-with-docs) turns a fuzzy
+issue into a plan: grill one question at a time, resolve terms against
+[CONTEXT.md](CONTEXT.md), verify claims against the code, and write the plan plus any
+CONTEXT.md / ADR updates. A well-specified issue skips the interview and starts at Ready.
 
-- Branch: `agent/<you>/<issue#>-<slug>`. One issue per branch.
-- Run the repo's mechanical gate (`make verify`, or tests + lint + typecheck) and
-  capture the exit code.
-- **A red gate means fix it or BLOCK — never open a PR on red.**
+### Executor — `exec:<you>`
+1. Branch `agent/<you>/<issue#>-<slug>`. One issue per branch.
+2. Do the work. In [solo](CONTEXT.md#solo) shape you also do your own planning.
+3. **Make CI green.** `make verify` runs as a required check — you do not *claim* the gate,
+   you *make it pass*.
+4. Open the PR: body contains `Closes #<issue#>`; summarize what changed and why; let CI carry
+   the evidence. **Never open a PR you expect to fail CI.** Opening it moves the board to Review.
 
-## Open the PR
+### Reviewer — `review:<you>` (reviewed shape only)
+Invoked when a PR closes an issue carrying your `review:` label. Judge what CI can't — right
+problem, sound approach. Output **approve**, or **changes** with a required reason tag
+(`execution` | `plan`). You **cannot** approve while CI is red (the gate is structural). On
+changes the executor iterates; a round-trip cap escalates to the human.
 
-- Body must contain `Closes #<issue#>`.
-- Summarize what changed and why.
-- **Paste the verify output / exit status as evidence.** Do not merely claim it passed.
-- Opening (or marking ready) the PR triggers automation that moves the issue to
-  **Review**. **Done** is reserved for merge/close — you never set it.
+## The gate
 
-## BLOCK
+Only CI `make verify` exit 0 (or a merged PR) is green — see [gate](CONTEXT.md#gate). Review
+and merge are unreachable until CI is green.
 
-If you can't proceed: add `stage:blocked`, comment the **specific** blocker, what is
-needed to unblock, and what you already tried. Then **stop** — don't spin.
+## Sub-loops
+
+If the work needs a separate unit, spawn a [sub-loop](CONTEXT.md#sub-loop) — a child issue:
+`gh issue create` as a sub-issue, set `depth:<parent+1>`, and pick the relationship:
+
+- [block](CONTEXT.md#block) — you need it solved first: set `stage:blocked` + `blocked-by:#child`
+  and stop; you resume automatically when the child merges.
+- [decompose](CONTEXT.md#decompose) — the parent is really several issues: it becomes a tracker.
+- [fork-off](CONTEXT.md#fork-off) — out of scope: file it and keep going.
+
+Respect the [guardrails](CONTEXT.md#guardrails): never spawn past `MAX_DEPTH`; never merge a
+parent with open children.
+
+## BLOCK / escalate
+
+If you can't proceed: add `stage:blocked`, comment the **specific** blocker, what is needed to
+unblock, and what you already tried. For loop thrash or repeated red CI the dispatcher sets
+`needs:human`. Then **stop** — don't spin.
 
 ## Always
 
-- Idempotency: before starting, check for an existing branch/PR for this issue —
-  resume, don't duplicate.
+- Idempotency: resume an existing branch/PR; never duplicate.
 - All bookkeeping via **labels + comments**. Never touch Project fields.
-- Commit/PR author identity on everything: `Moe Ghashim <mohanadgh@gmail.com>`.
+- Commit/PR identity on everything: `Moe Ghashim <mohanadgh@gmail.com>`.
+- Vocabulary: [CONTEXT.md](CONTEXT.md) — one name, one meaning.
 
 ## Label reference
 
 | Label | Meaning |
 |---|---|
-| `agent:codex` / `claude` / `pi` / `amp` | Active claim — this agent is working it (absence = unassigned) |
+| `exec:codex` / `claude` / `pi` / `amp` | Executor assignment — the active claim + lock for execution |
+| `review:codex` / `claude` / `pi` / `amp` | Reviewer assignment (reviewed shape only) |
 | `agent:human` | A human is working it |
-| `stage:blocked` | Orthogonal flag — blocked; see latest comment |
-| `type:bug` / `feature` / `chore` / `research` | Work type (no `type:review` — that collides with Status=Review) |
+| `run:active` | A run is in flight (lock mirror) |
+| `needs:cast` | Dispatcher refused: no executor assigned |
+| `needs:human` | Escalated to you (loop cap, repeated red CI) |
+| `stage:blocked` | Blocked; see latest comment — often carries `blocked-by:#N` |
+| `depth:1` / `2` / `3` | Sub-loop depth (root issues carry none) |
+| `type:bug` / `feature` / `chore` / `research` | Work type |
 | `priority:p0`..`p3` | Priority |
 
-Stage lives only as the board **Status** field (Inbox → Ready → In Progress → Review →
-Done), which you never touch. There is no `status:ready`/`stage:done` label.
+Stage lives only as the board **Status** (Inbox → Ready → In Progress → Review → Done), which
+you never set. The presence of a `review:` label **is** the [solo](CONTEXT.md#solo)-vs-[reviewed](CONTEXT.md#reviewed)
+shape — there is no separate flag.
