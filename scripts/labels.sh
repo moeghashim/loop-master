@@ -13,16 +13,30 @@ command -v gh >/dev/null 2>&1 || { echo "labels: missing dependency: gh" >&2; ex
 [ "$#" -ge 1 ] || { echo "usage: labels.sh <owner/repo> [<owner/repo> ...]" >&2; exit 1; }
 
 # name|hex color|description
-#  - NO status:ready  (READY is dispatch-only; not an agent-readable gate)
-#  - NO type:review   (collides with Status=Review; type:research covers spikes)
-#  - NO stage:done    (a closed issue IS done)
+# Converged model — see CONTEXT.md (vocabulary) and DISPATCHER.md (coordinator):
+#   - cast = exec:* / review:*  (assignment-based; the label is the per-issue lock)
+#   - presence of a review:* label IS the solo-vs-reviewed shape (no separate flag)
+#   - NO phase:* labels — pipeline state is derived from GitHub (PR / CI / board)
+#   - NO status:ready / type:review / stage:done (READY is dispatch; review collides
+#     with Status=Review; a closed issue IS done)
+#   - depth:N bounds sub-loop recursion (MAX_DEPTH)
 LABELS=(
-  "agent:codex|1f6feb|Active claim: Codex is working this"
-  "agent:claude|8957e5|Active claim: Claude is working this"
-  "agent:pi|0969da|Active claim: Pi is working this"
-  "agent:amp|bf8700|Active claim: Amp is working this"
-  "agent:human|6e7781|Active claim: a human is working this"
-  "stage:blocked|d1242f|Orthogonal flag: blocked (see latest comment)"
+  "exec:codex|1f6feb|Executor assignment: Codex (active claim + lock)"
+  "exec:claude|8957e5|Executor assignment: Claude (active claim + lock)"
+  "exec:pi|0969da|Executor assignment: Pi (active claim + lock)"
+  "exec:amp|bf8700|Executor assignment: Amp (active claim + lock)"
+  "review:codex|1f6feb|Reviewer assignment: Codex (reviewed shape)"
+  "review:claude|8957e5|Reviewer assignment: Claude (reviewed shape)"
+  "review:pi|0969da|Reviewer assignment: Pi (reviewed shape)"
+  "review:amp|bf8700|Reviewer assignment: Amp (reviewed shape)"
+  "agent:human|6e7781|A human is working this"
+  "run:active|1d76db|A run is in flight (lock mirror)"
+  "needs:cast|fbca04|Dispatcher refused: no executor assigned"
+  "needs:human|d93f0b|Escalated to a human (loop cap / repeated red CI)"
+  "stage:blocked|d1242f|Blocked (see latest comment); may carry blocked-by:#N"
+  "depth:1|c5def5|Sub-loop depth 1"
+  "depth:2|c5def5|Sub-loop depth 2"
+  "depth:3|c5def5|Sub-loop depth 3"
   "type:bug|d73a4a|Defect to fix"
   "type:feature|0e8a16|New capability"
   "type:chore|c5def5|Maintenance / ops / housekeeping"
