@@ -4,6 +4,43 @@ Run several coding agents (Codex, Claude Code, Cursor, Pi, Factory, Amp) against
 without babysitting them. **GitHub is the single source of truth**: issues + labels are
 canonical, and the Project board is a derived view kept in sync by automation.
 
+## The system
+
+```mermaid
+flowchart TD
+  YOU["You — triage · review · merge"]:::human
+  GH[("GitHub — issues · labels · board")]:::data
+  DISP["Dispatcher · Action — decides cast + solo/reviewed, writes labels"]:::orch
+  EXEC["Executor — vendor app, you can jump in"]:::agent
+  GATE{"CI · make verify — required"}:::mech
+  REV["Reviewer — vendor app, reviewed shape"]:::ai
+  GRADER["Nightly grader — blinded Action"]:::ai
+  RATINGS[("Ratings")]:::data
+  ROUTE[("routing.json")]:::data
+  YOU -->|triage → Ready| GH
+  GH -->|issue Ready| DISP
+  ROUTE -.->|confidence| DISP
+  DISP -->|writes cast labels| GH
+  DISP -->|assign| EXEC
+  EXEC -->|opens PR| GH
+  GH -->|PR| GATE
+  GATE -->|exit 0 first| REV
+  REV -->|approve| GH
+  REV -.->|changes| EXEC
+  YOU -.->|jump in| EXEC
+  YOU -->|merge → Done| GH
+  GH -->|merged, nightly| GRADER
+  GRADER --> RATINGS --> ROUTE
+  classDef human fill:#E1F5EE,stroke:#1D9E75,color:#085041;
+  classDef data fill:#E6F1FB,stroke:#378ADD,color:#0C447C;
+  classDef orch fill:#FBEAF0,stroke:#D4537E,color:#72243E;
+  classDef mech fill:#FAEEDA,stroke:#BA7517,color:#633806;
+  classDef agent fill:#F1EFE8,stroke:#888780,color:#2C2C2A;
+  classDef ai fill:#FAECE7,stroke:#D85A30,color:#712B13;
+```
+
+GitHub is the source of truth; a dispatcher Action decides the cast and writes labels (it never executes); the assigned vendor app runs the work; CI is the gate; you merge. After merge, a nightly blinded grader turns outcomes into the routing that shapes the next cast.
+
 ## The one rule
 
 Nothing is ever "done" on an agent's word. Only a **mechanical signal** — a passing
@@ -31,6 +68,25 @@ Each unit of work is an issue — a **loop**: `Inbox → Ready → In Progress �
 Two pipeline shapes, chosen per issue by the dispatcher: **solo** (one tool end-to-end) or
 **reviewed** (executor + an independent reviewer). The presence of a `review:` label *is* the
 shape.
+
+```mermaid
+flowchart TD
+  T["Triage · dispatcher — writes cast + shape"]:::orch --> X["Execute — vendor app"]:::agent
+  X --> V{"CI · make verify"}:::mech
+  V -->|non-zero| FB["Fix or block"]:::fail
+  FB -.->|after fix| X
+  V -->|exit 0| Q{"review: label?"}:::orch
+  Q -->|reviewed| R["Reviewer — vendor app"]:::ai
+  Q -->|solo| M["You merge → Done"]:::human
+  R -->|changes| X
+  R -->|approve| M
+  classDef orch fill:#FBEAF0,stroke:#D4537E,color:#72243E;
+  classDef agent fill:#F1EFE8,stroke:#888780,color:#2C2C2A;
+  classDef mech fill:#FAEEDA,stroke:#BA7517,color:#633806;
+  classDef ai fill:#FAECE7,stroke:#D85A30,color:#712B13;
+  classDef human fill:#E1F5EE,stroke:#1D9E75,color:#085041;
+  classDef fail fill:#FCEBEB,stroke:#E24B4A,color:#791F1F;
+```
 
 ### Sub-loops
 
