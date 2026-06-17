@@ -12,13 +12,14 @@ from urllib.parse import unquote, urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 LINK_RE = re.compile(r"(?<!!)\[[^\]]+\]\(([^)]+)\)")
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
+IGNORED_PARTS = {".git", "node_modules", "dist"}
 
 
 def markdown_files() -> list[Path]:
     return sorted(
         path
         for path in ROOT.rglob("*.md")
-        if ".git" not in path.parts
+        if not IGNORED_PARTS.intersection(path.parts)
     )
 
 
