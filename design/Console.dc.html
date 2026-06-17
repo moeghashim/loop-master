@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0c11;
+    --surface0:#0c0f15;
+    --surface1:#0d1117;
+    --surface2:#11151d;
+    --chip:#161c26;
+    --track:#1a2130;
+    --violet-surface:#13111c;
+    --flash-bg:#241a0b;
+    --bd0:#161d27;
+    --bd0b:#1a212c;
+    --bd1:#1c2330;
+    --bd1b:#1f2734;
+    --bd2:#222a37;
+    --bd2b:#232b39;
+    --bd3:#262e3c;
+    --bd4:#2a3342;
+    --bd5:#2f3b50;
+    --dot-idle:#39424f;
+    --bd-hover:#3a4760;
+    --violet-bd2:#2c2745;
+    --violet-bd:#3a3160;
+    --cyan-bd:#2f5a66;
+    --red-bd-soft:#3a2a26;
+    --red-bd:#6e3128;
+    --amber-bd:#6f5520;
+    --amber-bd2:#5a4a1f;
+    --tx0:#e7ebf2;
+    --tx0b:#dfe5ee;
+    --tx2:#cdd6e3;
+    --tx-mut:#98a2b3;
+    --tx-mut2:#9aa3b2;
+    --tx-mut3:#8b94a4;
+    --eyebrow:#707a89;
+    --faint:#6b7686;
+    --faint2:#5e6675;
+    --faintest:#454e5d;
+    --amber:#f4b53f;
+    --red:#e5604d;
+    --violet:#9b87f5;
+    --cyan:#5fb3c9;
+    --cyan2:#7fd0e0;
+    --blue:#8aa6cc;
+    --gold:#cbb27e;
+    --violet-ink:#b3a6e8;
+    --violet-ink2:#cdc3f5;
+    --red-ink:#e9a99d;
+    --flash-ink:#eed9a0;
+    --on-accent:#0a0c11;
+    --ink:#cdd6e3;--ink-fg:#0a0c11;
+    --code-bg:#0a0c11;
+    --header-bg:rgba(10,12,17,.78);
+    --shadow-lg:rgba(0,0,0,.7);
+  }
+  html[data-cc-theme="light"]{
+    --bg:#f3f4f7;
+    --surface0:#ffffff;
+    --surface1:#fbfcfd;
+    --surface2:#ffffff;
+    --chip:#edf0f5;
+    --track:#e6e9f0;
+    --violet-surface:#f5f2fc;
+    --flash-bg:#fcf4dd;
+    --bd0:#e7eaf1;
+    --bd0b:#e4e8ef;
+    --bd1:#e6e9f0;
+    --bd1b:#e0e4ec;
+    --bd2:#dce1ea;
+    --bd2b:#d9dee7;
+    --bd3:#d5dbe4;
+    --bd4:#ccd3df;
+    --bd5:#c2cbda;
+    --dot-idle:#c4cad4;
+    --bd-hover:#aebbcf;
+    --violet-bd2:#ddd4f3;
+    --violet-bd:#d6cbf2;
+    --cyan-bd:#b6dee6;
+    --red-bd-soft:#f0cabf;
+    --red-bd:#f0bdb1;
+    --amber-bd:#e6cd92;
+    --amber-bd2:#e6cd92;
+    --tx0:#1b212b;
+    --tx0b:#2a313d;
+    --tx2:#2b3340;
+    --tx-mut:#586374;
+    --tx-mut2:#5e6a7b;
+    --tx-mut3:#66707f;
+    --eyebrow:#79828f;
+    --faint:#7c8593;
+    --faint2:#99a1ad;
+    --faintest:#aeb4bf;
+    --amber:#b87d10;
+    --red:#d23f29;
+    --violet:#6d54e0;
+    --cyan:#1f8fa8;
+    --cyan2:#1f8fa8;
+    --blue:#4f6f9e;
+    --gold:#8a6a28;
+    --violet-ink:#6d54e0;
+    --violet-ink2:#5a48c0;
+    --red-ink:#b13a26;
+    --flash-ink:#6b5418;
+    --on-accent:#0a0c11;
+    --ink:#1b212b;--ink-fg:#f3f4f7;
+    --code-bg:#eef1f6;
+    --header-bg:rgba(243,244,247,.82);
+    --shadow-lg:rgba(33,45,66,.16);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--tx0);font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+  ::selection{background:rgba(244,181,63,.28);}
+  a{color:inherit;text-decoration:none;}
+  ::-webkit-scrollbar{height:10px;width:10px;}
+  ::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:6px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  @keyframes ccpulse{0%,100%{box-shadow:0 0 0 0 rgba(244,181,63,.45)}70%{box-shadow:0 0 0 7px rgba(244,181,63,0)}}
+  @keyframes ccrun{0%,100%{opacity:1}50%{opacity:.35}}
+  @keyframes ccblink{0%,45%{opacity:1}50%,100%{opacity:0}}
+  @keyframes ccslide{from{transform:translateX(26px);opacity:0}to{transform:translateX(0);opacity:1}}
+</style>
+</helmet>
+
+<div style="position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(1100px 700px at 82% -10%,rgba(244,181,63,.05),transparent 60%),radial-gradient(900px 600px at 4% 4%,rgba(155,135,245,.045),transparent 55%);"></div>
+
+<div style="position:relative;z-index:1;min-height:100vh;">
+
+  <!-- TOP BAR -->
+  <header style="position:sticky;top:0;z-index:40;backdrop-filter:blur(10px);background:var(--header-bg);border-bottom:1px solid var(--bd0b);">
+    <div style="max-width:1400px;margin:0 auto;padding:12px clamp(16px,3vw,32px);display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <div onClick="{{onHome}}" style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 7px rgba(244,181,63,.5));"><path d="M21 12a9 9 0 1 1-3.4-7"></path><path d="M21 4v5h-5"></path></svg>
+        <span style="font-family:'JetBrains Mono',monospace;font-weight:600;font-size:15px;letter-spacing:-.01em;white-space:nowrap;">Loop Master</span>
+      </div>
+      <nav style="display:flex;gap:4px;margin-left:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;">
+        <span onClick="{{onHome}}" style="{{navNewStyle}}">new</span>
+        <span onClick="{{onOverview}}" style="{{navOverviewStyle}}">overview</span>
+        <span onClick="{{onLeaderboard}}" style="{{navLbStyle}}">leaderboard</span>
+        <a href="Control Center.dc.html" style="padding:6px 11px;border-radius:7px;color:var(--tx-mut);">reference</a>
+      </nav>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:12px;">
+        <button onClick="{{onToggleTheme}}" style="font-family:'JetBrains Mono',monospace;font-size:12px;cursor:pointer;color:var(--tx-mut);background:var(--surface2);border:1px solid var(--bd2b);border-radius:8px;padding:6px 11px;">{{themeIcon}}</button>
+        <div style="display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--tx-mut3);border:1px solid var(--bd2b);border-radius:8px;padding:5px 10px;">
+          <span style="width:7px;height:7px;border-radius:50%;background:var(--cyan);animation:ccrun 1.4s infinite;"></span>dispatcher live
+        </div>
+        <div style="width:30px;height:30px;border-radius:8px;border:1px solid var(--bd4);background:var(--chip);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--tx2);">yu</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= HOME ================= -->
+  <sc-if value="{{isHome}}" hint-placeholder-val="{{false}}">
+  <main style="max-width:1080px;margin:0 auto;padding:clamp(40px,7vw,88px) clamp(16px,3vw,32px) 80px;">
+    <div style="text-align:center;max-width:680px;margin:0 auto;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--eyebrow);">Loop Master</div>
+      <h1 style="margin:14px 0 0;font-weight:600;font-size:clamp(30px,5vw,52px);letter-spacing:-.03em;line-height:1.04;">What do you want built?</h1>
+      <p style="margin:16px 0 0;font-size:17px;color:var(--tx-mut);line-height:1.6;">Describe it loosely. You’ll be interviewed until it’s unambiguous — then it becomes issues and the loop starts.</p>
+    </div>
+
+    <div style="max-width:680px;margin:34px auto 0;border:1px solid var(--bd1b);background:var(--surface1);border-radius:18px;padding:20px;box-shadow:0 30px 80px -50px var(--shadow-lg);">
+      <div style="display:flex;gap:8px;">
+        <sc-for list="{{homeModes}}" as="m" hint-placeholder-count="2">
+          <span onClick="{{m.onClick}}" style="{{m.style}}">{{m.label}}</span>
+        </sc-for>
+      </div>
+      <textarea value="{{homePrompt}}" onInput="{{onHomePrompt}}" placeholder="e.g. A checkout flow that supports gift cards and Apple Pay, with idempotent orders…" style="width:100%;margin-top:14px;min-height:120px;resize:vertical;box-sizing:border-box;background:var(--surface2);border:1px solid var(--bd2b);border-radius:12px;padding:14px 15px;color:var(--tx0);font-family:'Geist',sans-serif;font-size:15.5px;line-height:1.55;outline:none;"></textarea>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;flex-wrap:wrap;">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--faint);">the interviewer will grill you for details</span>
+        <button onClick="{{onStart}}" style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;cursor:pointer;color:var(--on-accent);background:var(--amber);border:none;border-radius:10px;padding:11px 20px;">Start interview →</button>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:14px;max-width:680px;margin:26px auto 0;">
+      <div style="flex:1;height:1px;background:var(--bd0);"></div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--faint);">or</span>
+      <div style="flex:1;height:1px;background:var(--bd0);"></div>
+    </div>
+
+    <div onClick="{{onOverview}}" style="max-width:680px;margin:26px auto 0;border:1px solid var(--bd1b);background:var(--surface1);border-radius:16px;padding:20px 22px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;" style-hover="border-color:var(--bd-hover)">
+      <div>
+        <div style="font-weight:600;font-size:17px;">View current state</div>
+        <div style="font-size:14px;color:var(--tx-mut);margin-top:4px;">Projects, the kanban board, and what needs you right now.</div>
+      </div>
+      <div style="display:flex;gap:18px;align-items:center;">
+        <div style="text-align:center;"><div style="font-size:20px;font-weight:600;">{{homeActive}}</div><div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--faint);">active</div></div>
+        <div style="text-align:center;"><div style="font-size:20px;font-weight:600;color:var(--amber);">{{homeAwaiting}}</div><div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--faint);">await you</div></div>
+        <div style="text-align:center;"><div style="font-size:20px;font-weight:600;color:var(--red);">{{homeRed}}</div><div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--faint);">gate red</div></div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--tx-mut);">open →</span>
+      </div>
+    </div>
+  </main>
+  </sc-if>
+
+  <!-- ================= OVERVIEW ================= -->
+  <sc-if value="{{isOverview}}" hint-placeholder-val="{{true}}">
+  <main style="max-width:1400px;margin:0 auto;padding:clamp(28px,4vw,52px) clamp(16px,3vw,32px) 80px;">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.18em;color:var(--eyebrow);text-transform:uppercase;">Operator console</div>
+        <h1 style="margin:10px 0 0;font-weight:600;font-size:clamp(26px,3.6vw,40px);letter-spacing:-.025em;">Your projects</h1>
+        <p style="margin:9px 0 0;font-size:15.5px;color:var(--tx-mut);max-width:60ch;">Every unit of work is a GitHub issue. Watch progress across projects — and see exactly what needs you.</p>
+      </div>
+    </div>
+
+    <!-- AGGREGATE STRIP -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:30px;">
+      <sc-for list="{{stats}}" as="s" hint-placeholder-count="5">
+        <div style="{{s.style}}">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.06em;color:var(--tx-mut3);text-transform:uppercase;">{{s.label}}</div>
+          <div style="{{s.valueStyle}}">{{s.value}}</div>
+          <div style="font-size:12px;color:var(--faint);">{{s.hint}}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- AGENT ACTIVITY -->
+    <div style="margin-top:26px;border:1px solid var(--bd1b);border-radius:14px;background:var(--surface1);padding:18px 20px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;color:var(--eyebrow);text-transform:uppercase;margin-bottom:14px;">Roster activity · now</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">
+        <sc-for list="{{agents}}" as="a" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:12px;border:1px solid var(--bd1);border-radius:11px;background:var(--surface2);padding:13px 15px;">
+            <div style="width:34px;height:34px;border-radius:9px;border:1px solid var(--bd4);background:var(--chip);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:12px;color:var(--tx2);flex:0 0 auto;">{{a.init}}</div>
+            <div style="min-width:0;flex:1;">
+              <div style="display:flex;align-items:center;gap:8px;"><span style="font-family:'JetBrains Mono',monospace;font-weight:600;font-size:14px;">{{a.name}}</span><span style="{{a.dotStyle}}"></span></div>
+              <div style="font-size:12.5px;color:var(--tx-mut3);margin-top:2px;">{{a.detail}}</div>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--tx2);">{{a.active}}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;color:var(--eyebrow);text-transform:uppercase;margin:34px 0 14px;">Projects</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px;">
+      <sc-for list="{{projects}}" as="p" hint-placeholder-count="4">
+        <div onClick="{{p.onClick}}" style="border:1px solid var(--bd2b);border-radius:16px;background:linear-gradient(180deg,var(--surface2),var(--surface1));padding:20px;cursor:pointer;transition:border-color .2s, transform .2s;" style-hover="border-color:var(--bd-hover);transform:translateY(-2px)">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">
+            <div>
+              <div style="font-family:'JetBrains Mono',monospace;font-weight:600;font-size:16px;letter-spacing:-.01em;">{{p.name}}</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--faint);margin-top:3px;">{{p.repo}}</div>
+            </div>
+            <div style="text-align:right;flex:0 0 auto;">
+              <div style="font-size:22px;font-weight:600;color:var(--amber);">{{p.pct}}%</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);">done</div>
+            </div>
+          </div>
+
+          <div style="display:flex;height:8px;border-radius:5px;overflow:hidden;background:var(--track);margin-top:18px;gap:2px;">
+            <sc-for list="{{p.segs}}" as="g" hint-placeholder-count="4">
+              <div style="{{g.style}}"></div>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px 16px;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--tx-mut3);">
+            <sc-for list="{{p.legend}}" as="l" hint-placeholder-count="5">
+              <span style="display:inline-flex;align-items:center;gap:6px;"><span style="{{l.dot}}"></span>{{l.text}}</span>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap;">
+            <div style="display:flex;gap:7px;flex-wrap:wrap;">
+              <sc-for list="{{p.badges}}" as="b" hint-placeholder-count="2">
+                <span style="{{b.style}}">{{b.text}}</span>
+              </sc-for>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--faint2);">open board →</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </main>
+  </sc-if>
+
+  <!-- ================= BOARD ================= -->
+  <sc-if value="{{isBoard}}" hint-placeholder-val="{{true}}">
+  <main style="max-width:1500px;margin:0 auto;padding:clamp(20px,3vw,34px) clamp(16px,3vw,32px) 60px;">
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+      <span onClick="{{onOverview}}" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--tx-mut);cursor:pointer;border:1px solid var(--bd2b);border-radius:8px;padding:7px 12px;">← overview</span>
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-weight:600;font-size:20px;letter-spacing:-.01em;white-space:nowrap;">{{boardName}}</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--faint);">{{boardRepo}}</div>
+      </div>
+    </div>
+
+    <!-- project pills + filters -->
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:18px;">
+      <sc-for list="{{pills}}" as="p" hint-placeholder-count="4">
+        <span onClick="{{p.onClick}}" style="{{p.style}}">{{p.name}}</span>
+      </sc-for>
+      <span onClick="{{onToggleBlocked}}" style="{{blockedFilterStyle}}">⚑ blocked only</span>
+      <div style="margin-left:auto;display:flex;gap:13px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--tx-mut3);align-items:center;">
+        <span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:var(--amber);"></span>verify exit 0</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:var(--red);"></span>gate red</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:2px;background:var(--violet);"></span>review</span>
+      </div>
+    </div>
+
+    <!-- columns -->
+    <div style="display:flex;gap:14px;margin-top:22px;overflow-x:auto;padding-bottom:14px;align-items:flex-start;">
+      <sc-for list="{{board}}" as="col" hint-placeholder-count="5">
+        <div style="flex:1 1 270px;min-width:255px;background:var(--surface1);border:1px solid var(--bd1);border-radius:14px;overflow:hidden;align-self:stretch;">
+          <div style="display:flex;align-items:center;gap:9px;padding:13px 15px;border-bottom:1px solid var(--bd0);border-top:2px solid {{col.accent}};">
+            <span style="font-family:'JetBrains Mono',monospace;font-weight:600;font-size:13px;color:var(--tx0b);">{{col.label}}</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--faint);background:var(--chip);border-radius:6px;padding:1px 8px;">{{col.count}}</span>
+          </div>
+          <div style="padding:11px;display:flex;flex-direction:column;gap:11px;min-height:60px;">
+            <sc-for list="{{col.cards}}" as="c" hint-placeholder-count="2">
+              <div onClick="{{c.onClick}}" style="{{c.cardStyle}}">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--blue);">#{{c.id}}</span>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--tx-mut3);border:1px solid var(--bd4);border-radius:5px;padding:1px 7px;">{{c.typeLabel}}</span>
+                  <sc-if value="{{c.blocked}}" hint-placeholder-val="{{false}}">
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--red);border:1px solid var(--red-bd);background:rgba(229,96,77,.1);border-radius:5px;padding:1px 7px;">⚑ blocked</span>
+                  </sc-if>
+                </div>
+                <div style="font-size:14px;font-weight:500;color:var(--tx0);margin-top:9px;line-height:1.35;">{{c.title}}</div>
+                <sc-if value="{{c.reviewReason}}" hint-placeholder-val="{{false}}">
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);margin-top:7px;">↩ changes · {{c.reviewReason}}</div>
+                </sc-if>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;flex-wrap:wrap;">
+                  <div style="display:flex;gap:5px;">
+                    <sc-for list="{{c.chips}}" as="ch" hint-placeholder-count="3">
+                      <span style="{{ch.style}}" title="{{ch.title}}">{{ch.name}}</span>
+                    </sc-for>
+                  </div>
+                  <span style="{{c.gateStyle}}">{{c.gateText}}</span>
+                </div>
+              </div>
+            </sc-for>
+            <sc-if value="{{col.empty}}" hint-placeholder-val="{{false}}">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--faintest);text-align:center;padding:14px 0;">— empty —</div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </main>
+  </sc-if>
+
+  <!-- ================= LEADERBOARD ================= -->
+  <sc-if value="{{isLeaderboard}}" hint-placeholder-val="{{false}}">
+  <main style="max-width:1100px;margin:0 auto;padding:clamp(28px,4vw,52px) clamp(16px,3vw,32px) 80px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.18em;color:var(--eyebrow);text-transform:uppercase;">Leaderboard</div>
+    <h1 style="margin:10px 0 0;font-weight:600;font-size:clamp(26px,3.6vw,40px);letter-spacing:-.025em;">How the agents score</h1>
+    <p style="margin:9px 0 0;font-size:15.5px;color:var(--tx-mut);max-width:66ch;">Scored nightly by a blinded grader — never an agent that worked the issue. These ratings drive the next cast: exploit best-fit, sometimes explore.</p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:28px;align-items:stretch;">
+      <div style="flex:1 1 320px;border:1px solid var(--amber-bd);background:linear-gradient(180deg,rgba(244,181,63,.08),transparent);border-radius:16px;padding:22px;display:flex;align-items:center;gap:18px;">
+        <div style="width:54px;height:54px;border-radius:13px;border:1px solid var(--amber-bd);background:var(--chip);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:16px;color:var(--amber);flex:0 0 auto;">{{lb.champ.init}}</div>
+        <div style="min-width:0;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);">#1 · {{lb.champ.metricLabel}}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-weight:600;font-size:22px;margin-top:4px;">{{lb.champ.name}}</div>
+          <div style="font-size:13px;color:var(--tx-mut);margin-top:3px;">{{lb.champ.n}} graded · {{lb.champ.merge}} merged</div>
+        </div>
+        <div style="margin-left:auto;text-align:right;flex:0 0 auto;">
+          <div style="font-family:'Geist',sans-serif;font-size:38px;font-weight:600;color:var(--amber);letter-spacing:-.02em;line-height:1;">{{lb.champ.score}}</div>
+          <div style="{{lb.champ.trend.style}}">{{lb.champ.trend.txt}}</div>
+        </div>
+      </div>
+      <div style="flex:1 1 240px;border:1px solid var(--bd1b);background:var(--surface1);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:11px;justify-content:center;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--eyebrow);">Rank by</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;">
+          <sc-for list="{{lb.seg}}" as="s" hint-placeholder-count="4"><span onClick="{{s.onClick}}" style="{{s.style}}">{{s.label}}</span></sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:18px;">
+      <sc-for list="{{lb.rows}}" as="r" hint-placeholder-count="6">
+        <div style="{{r.rowStyle}}">
+          <div style="{{r.rankStyle}}">{{r.rank}}</div>
+          <div style="width:38px;height:38px;border-radius:10px;border:1px solid var(--bd4);background:var(--chip);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:12px;color:var(--tx2);flex:0 0 auto;">{{r.init}}</div>
+          <div style="flex:1 1 150px;min-width:120px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-weight:600;font-size:15px;">{{r.name}}</div>
+            <div style="height:6px;border-radius:4px;background:var(--track);margin-top:7px;overflow:hidden;"><div style="{{r.barStyle}}"></div></div>
+          </div>
+          <div style="display:flex;gap:5px;flex:0 0 auto;">
+            <sc-for list="{{r.roleChips}}" as="rc" hint-placeholder-count="3"><span style="{{rc.style}}">{{rc.k}} {{rc.v}}</span></sc-for>
+          </div>
+          <div style="text-align:center;flex:0 0 auto;width:54px;"><div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--tx-mut3);">{{r.merge}}</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);">merged</div></div>
+          <div style="{{r.trend.style}}">{{r.trend.txt}}</div>
+          <div style="font-family:'Geist',sans-serif;font-weight:600;font-size:22px;flex:0 0 auto;width:50px;text-align:right;letter-spacing:-.02em;">{{r.score}}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;color:var(--eyebrow);text-transform:uppercase;margin:34px 0 14px;">Best-fit by work type · drives routing</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;">
+      <sc-for list="{{lb.byBest}}" as="t" hint-placeholder-count="6">
+        <div style="border:1px solid var(--bd1b);background:var(--surface1);border-radius:13px;padding:16px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--tx-mut);">{{t.type}}</span><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--amber);">best-fit</span></div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin-top:10px;"><span style="font-family:'JetBrains Mono',monospace;font-weight:600;font-size:16px;">{{t.agent}}</span><span style="font-family:'Geist',sans-serif;font-weight:600;font-size:18px;color:var(--amber);">{{t.score}}</span></div>
+          <div style="height:5px;border-radius:3px;background:var(--track);margin-top:10px;overflow:hidden;"><div style="{{t.barStyle}}"></div></div>
+        </div>
+      </sc-for>
+    </div>
+  </main>
+  </sc-if>
+
+  <!-- ================= INTERVIEW ================= -->
+  <sc-if value="{{isInterview}}" hint-placeholder-val="{{false}}">
+  <main style="max-width:1120px;margin:0 auto;padding:clamp(18px,3vw,30px) clamp(16px,3vw,32px) 44px;display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;">
+    <div style="flex:1 1 520px;min-width:0;display:flex;flex-direction:column;">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span onClick="{{onHome}}" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--tx-mut);cursor:pointer;border:1px solid var(--bd2b);border-radius:8px;padding:7px 12px;">← home</span>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--eyebrow);text-transform:uppercase;letter-spacing:.12em;">Interview · {{iv.modeLabel}}</div>
+        <span onClick="{{iv.onRestart}}" style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--faint);cursor:pointer;">restart</span>
+      </div>
+
+      <div ref="{{chatRef}}" style="margin-top:16px;border:1px solid var(--bd1b);background:var(--surface1);border-radius:16px;padding:18px;max-height:60vh;overflow-y:auto;display:flex;flex-direction:column;gap:16px;">
+        <sc-for list="{{iv.messages}}" as="m" hint-placeholder-count="3">
+          <div style="{{m.rowStyle}}">
+            <div style="max-width:82%;">
+              <div style="{{m.labelStyle}}">{{m.who}}</div>
+              <div style="{{m.bubbleStyle}}">{{m.text}}</div>
+            </div>
+          </div>
+        </sc-for>
+        <sc-if value="{{iv.typing}}" hint-placeholder-val="{{false}}">
+          <div style="display:flex;justify-content:flex-start;"><div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--amber);padding:4px 0;">interviewer is typing<span style="animation:ccblink 1s step-end infinite;">…</span></div></div>
+        </sc-if>
+        <sc-if value="{{iv.done}}" hint-placeholder-val="{{false}}">
+          <div style="border:1px solid var(--amber-bd);background:rgba(244,181,63,.06);border-radius:14px;padding:16px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);">Brief → dispatcher</div>
+            <div style="display:flex;flex-direction:column;gap:11px;margin-top:13px;">
+              <sc-for list="{{iv.summary}}" as="s" hint-placeholder-count="4">
+                <div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);">{{s.label}}</div><div style="font-size:14px;color:var(--tx0);line-height:1.5;margin-top:3px;">{{s.val}}</div></div>
+              </sc-for>
+            </div>
+            <button onClick="{{iv.onCreate}}" style="margin-top:16px;width:100%;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;cursor:pointer;color:var(--on-accent);background:var(--amber);border:none;border-radius:10px;padding:12px;">Create issues &amp; start the loop →</button>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:14px;align-items:flex-end;">
+        <textarea value="{{iv.input}}" onInput="{{iv.onInput}}" onKeyDown="{{iv.onKey}}" placeholder="Type your answer… (Enter to send)" style="flex:1;min-height:50px;max-height:150px;resize:none;box-sizing:border-box;background:var(--surface2);border:1px solid var(--bd2b);border-radius:12px;padding:14px;color:var(--tx0);font-family:'Geist',sans-serif;font-size:15px;line-height:1.5;outline:none;"></textarea>
+        <button onClick="{{iv.onSend}}" style="{{iv.sendStyle}}">send</button>
+      </div>
+    </div>
+
+    <div style="flex:0 0 248px;width:248px;border:1px solid var(--bd1b);background:var(--surface1);border-radius:16px;padding:18px;position:sticky;top:80px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--eyebrow);">Coverage</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--amber);margin-top:8px;">{{iv.coverageLabel}}</div>
+      <div style="margin-top:10px;display:flex;flex-direction:column;">
+        <sc-for list="{{iv.coverage}}" as="c" hint-placeholder-count="6">
+          <div style="{{c.style}}"><span style="{{c.dot}}"></span>{{c.name}}</div>
+        </sc-for>
+      </div>
+      <div style="font-size:12px;color:var(--tx-mut);margin-top:14px;line-height:1.5;border-top:1px solid var(--bd0);padding-top:12px;">Answer fully — vague answers get grilled. When every topic is covered, the brief becomes issues.</div>
+    </div>
+  </main>
+  </sc-if>
+
+  <!-- ================= DETAIL DRAWER ================= -->
+  <sc-if value="{{detail}}" hint-placeholder-val="{{false}}">
+    <div onClick="{{onClose}}" style="position:fixed;inset:0;z-index:60;background:rgba(6,8,12,.62);backdrop-filter:blur(2px);"></div>
+    <aside style="position:fixed;top:0;right:0;bottom:0;z-index:61;width:min(460px,94vw);background:var(--surface0);border-left:1px solid var(--bd2b);box-shadow:-30px 0 80px -30px var(--shadow-lg);overflow-y:auto;animation:ccslide .22s ease;">
+      <div style="padding:22px clamp(18px,4vw,26px);">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--blue);">#{{d.id}}</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--tx-mut3);border:1px solid var(--bd4);border-radius:5px;padding:1px 7px;">{{d.typeLabel}}</span>
+            <span style="{{d.stateStyle}}">{{d.stateLabel}}</span>
+          </div>
+          <span onClick="{{onClose}}" style="cursor:pointer;color:var(--tx-mut3);font-size:20px;line-height:1;padding:2px 6px;">✕</span>
+        </div>
+        <h2 style="margin:14px 0 0;font-size:21px;font-weight:600;letter-spacing:-.015em;line-height:1.25;">{{d.title}}</h2>
+
+        <sc-if value="{{d.blocked}}" hint-placeholder-val="{{false}}">
+          <div style="margin-top:14px;display:flex;align-items:center;gap:9px;border:1px solid var(--red-bd);background:rgba(229,96,77,.1);border-radius:10px;padding:11px 13px;font-size:13px;color:var(--red-ink);"><span style="font-family:'JetBrains Mono',monospace;color:var(--red);">⚑ blocked</span> · {{d.blockedReason}}</div>
+        </sc-if>
+
+        <!-- CAST -->
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--eyebrow);text-transform:uppercase;margin-top:22px;">The cast</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:11px;">
+          <sc-for list="{{d.cast}}" as="m" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:11px;border:1px solid var(--bd1);border-radius:10px;background:var(--surface2);padding:10px 13px;">
+              <span style="{{m.roleStyle}}">{{m.role}}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-weight:600;font-size:14px;">{{m.name}}</span>
+              <span style="margin-left:auto;font-size:12px;color:var(--faint);">{{m.note}}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--faint2);margin-top:9px;line-height:1.5;">// graded nightly by an agent that didn’t work this issue</div>
+
+        <!-- GATE -->
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--eyebrow);text-transform:uppercase;margin-top:24px;">Mechanical gate</div>
+        <div style="margin-top:11px;border:1px solid {{d.gateBorder}};background:{{d.gateBg}};border-radius:12px;padding:15px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+            <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px;color:{{d.gateColor}};">make verify</span>
+            <span style="{{d.gateStyle}}">{{d.gateText}}</span>
+          </div>
+          <div style="font-size:13px;color:var(--tx-mut3);margin-top:9px;line-height:1.5;">{{d.gateNote}}</div>
+          <sc-if value="{{d.canVerify}}" hint-placeholder-val="{{false}}">
+            <button onClick="{{d.onVerify}}" style="margin-top:13px;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--on-accent);background:var(--amber);border:none;border-radius:8px;padding:9px 15px;">▸ dispatcher: run make verify</button>
+          </sc-if>
+        </div>
+
+        <!-- RUN STREAM -->
+        <sc-if value="{{d.showRun}}" hint-placeholder-val="{{false}}">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--eyebrow);text-transform:uppercase;margin-top:24px;">Run stream · ndjson</div>
+          <pre style="margin:11px 0 0;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;white-space:pre-wrap;color:var(--tx-mut3);background:var(--code-bg);border:1px solid var(--bd1);border-radius:10px;padding:13px;">{{d.runText}}<span style="color:var(--cyan);animation:ccblink 1.1s step-end infinite;">▋</span></pre>
+        </sc-if>
+
+        <!-- REVIEW VERDICT -->
+        <sc-if value="{{d.reviewReason}}" hint-placeholder-val="{{false}}">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--eyebrow);text-transform:uppercase;margin-top:24px;">Last review verdict</div>
+          <pre style="margin:11px 0 0;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.7;white-space:pre-wrap;color:var(--violet-ink2);background:var(--violet-surface);border:1px solid var(--violet-bd2);border-radius:10px;padding:13px;">{ <span style="color:var(--violet);">"verdict"</span>: "changes",
+  <span style="color:var(--violet);">"reason"</span>:  "{{d.reviewReason}}",
+  <span style="color:var(--violet);">"notes"</span>:   "{{d.reviewNote}}" }</pre>
+        </sc-if>
+
+        <!-- PROMOTE -->
+        <div style="margin-top:26px;border-top:1px solid var(--bd0b);padding-top:18px;">
+          <button onClick="{{d.onPromote}}" style="{{d.promoteStyle}}">{{d.promoteLabel}}</button>
+          <div style="font-size:12.5px;color:var(--faint);margin-top:10px;line-height:1.5;">{{d.promoteHint}}</div>
+        </div>
+      </div>
+    </aside>
+  </sc-if>
+
+  <!-- FLASH -->
+  <sc-if value="{{flash}}" hint-placeholder-val="{{false}}">
+    <div style="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:80;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--flash-ink);background:var(--flash-bg);border:1px solid var(--amber-bd2);border-radius:10px;padding:12px 18px;box-shadow:0 18px 50px -18px var(--shadow-lg);max-width:90vw;">{{flash}}</div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.ORD = ['inbox','ready','inprogress','review','done'];
+    this.COLS = [
+      {key:'inbox',      label:'Inbox',       accent:'var(--faint2)'},
+      {key:'ready',      label:'Ready',       accent:'var(--blue)'},
+      {key:'inprogress', label:'In progress', accent:'var(--cyan)'},
+      {key:'review',     label:'Review',      accent:'var(--violet)'},
+      {key:'done',       label:'Done',        accent:'var(--amber)'},
+    ];
+    this.LABEL = {inbox:'Inbox',ready:'Ready',inprogress:'In progress',review:'Review',done:'Done'};
+    this.ACC = {inbox:'var(--faint2)',ready:'var(--blue)',inprogress:'var(--cyan)',review:'var(--violet)',done:'var(--amber)'};
+    this.ROSTER = ['Codex','Claude','Pi','Amp','Cursor','Factory'];
+    this.TYPES = ['feature','bugfix','refactor','perf','docs','chore'];
+    this.RATINGS = {
+      Codex:   { overall:7.8, n:34, merge:0.91, trend:+0.4, roles:{planner:7.2, executor:8.1, reviewer:7.0}, types:{feature:8.0, bugfix:7.6, refactor:7.1, perf:7.4, docs:6.8, chore:7.0} },
+      Claude:  { overall:7.9, n:41, merge:0.93, trend:+0.2, roles:{planner:8.4, executor:7.6, reviewer:7.8}, types:{feature:7.7, bugfix:7.5, refactor:8.2, perf:7.0, docs:8.1, chore:7.3} },
+      Pi:      { overall:7.6, n:29, merge:0.88, trend:+0.6, roles:{planner:7.0, executor:7.4, reviewer:8.3}, types:{feature:7.2, bugfix:8.0, refactor:7.3, perf:7.1, docs:7.4, chore:7.0} },
+      Amp:     { overall:7.1, n:23, merge:0.84, trend:-0.2, roles:{planner:7.3, executor:6.9, reviewer:7.2}, types:{feature:6.9, bugfix:7.0, refactor:7.4, perf:6.7, docs:7.6, chore:7.2} },
+      Cursor:  { overall:7.4, n:18, merge:0.86, trend:+0.5, roles:{planner:6.8, executor:7.9, reviewer:7.0}, types:{feature:7.8, bugfix:7.5, refactor:6.9, perf:7.2, docs:6.6, chore:7.1} },
+      Factory: { overall:6.9, n:12, merge:0.80, trend:+0.3, roles:{planner:6.5, executor:7.2, reviewer:6.8}, types:{feature:7.1, bugfix:6.8, refactor:6.7, perf:6.9, docs:6.4, chore:7.3} },
+    };
+    this.PROJECTS = [
+      {id:'checkout', name:'checkout-service', repo:'bannaa/checkout'},
+      {id:'web',      name:'web-app',          repo:'bannaa/web'},
+      {id:'infra',    name:'infra',            repo:'bannaa/infra'},
+      {id:'docs',     name:'docs-site',        repo:'bannaa/docs'},
+    ];
+    this.NOTES = {
+      42:'missing null-check on empty cart', 40:'unhandled timeout on redeem',
+    };
+    const I = [
+      {p:'checkout', id:42, t:'Empty-cart null-check in loop.flow', type:'bugfix',  s:'review',     g:'green',   roles:['Claude','Codex','Pi']},
+      {p:'checkout', id:39, t:'Coupon stacking rules',              type:'feature', s:'review',     g:'green',   roles:['Pi','Claude','Amp']},
+      {p:'checkout', id:41, t:'Stripe webhook idempotency',         type:'bugfix',  s:'inprogress', g:'running', roles:['Claude','Amp','Pi']},
+      {p:'checkout', id:44, t:'Refactor pricing engine',            type:'refactor',s:'inprogress', g:'red',     roles:['Pi','Codex','Claude']},
+      {p:'checkout', id:40, t:'Gift card redemption',               type:'feature', s:'inprogress', g:'pending', roles:['Amp','Claude','Codex'], reviewReason:'execution'},
+      {p:'checkout', id:43, t:'Apple Pay express button',           type:'feature', s:'inprogress', g:'pending', roles:['Codex','Pi','Claude']},
+      {p:'checkout', id:45, t:'Idempotency keys on orders',         type:'feature', s:'ready',      g:'pending', roles:['Claude','Codex','Pi']},
+      {p:'checkout', id:46, t:'Tax rounding off-by-one',            type:'bugfix',  s:'ready',      g:'pending', roles:['Pi','Amp','Codex'], blocked:'waits on #44 pricing refactor'},
+      {p:'checkout', id:47, t:'Cart persistence across sessions',   type:'feature', s:'inbox',      g:'pending', roles:['Codex','Claude','Pi']},
+      {p:'checkout', id:48, t:'Remove legacy checkout v1',          type:'chore',   s:'inbox',      g:'pending', roles:['Amp','Pi','Claude']},
+      {p:'checkout', id:38, t:'Inventory reservation race',         type:'bugfix',  s:'done',       g:'green',   roles:['Claude','Codex','Pi']},
+      {p:'checkout', id:37, t:'Checkout latency p99',               type:'perf',    s:'done',       g:'green',   roles:['Pi','Amp','Codex']},
+
+      {p:'web', id:112, t:'Dark mode design tokens',     type:'feature', s:'inprogress', g:'running', roles:['Claude','Pi','Codex']},
+      {p:'web', id:110, t:'Fix layout shift on hero',    type:'bugfix',  s:'review',     g:'green',   roles:['Codex','Claude','Pi']},
+      {p:'web', id:108, t:'Onboarding wizard · step 3',  type:'feature', s:'ready',      g:'pending', roles:['Pi','Codex','Amp']},
+      {p:'web', id:113, t:'Settings page a11y pass',     type:'chore',   s:'inbox',      g:'pending', roles:['Amp','Claude','Pi']},
+      {p:'web', id:106, t:'Sticky nav scroll jank',      type:'bugfix',  s:'done',       g:'green',   roles:['Claude','Codex','Pi']},
+      {p:'web', id:107, t:'Image lazy-load below fold',  type:'perf',    s:'done',       g:'green',   roles:['Pi','Amp','Codex']},
+
+      {p:'infra', id:73, t:'Migrate CI to make verify', type:'chore',  s:'inprogress', g:'red',     roles:['Codex','Claude','Pi']},
+      {p:'infra', id:71, t:'Rotate KMS keys',           type:'chore',  s:'review',     g:'green',   roles:['Pi','Codex','Amp']},
+      {p:'infra', id:74, t:'Terraform drift on staging',type:'bugfix', s:'inprogress', g:'pending', roles:['Claude','Amp','Pi'], blocked:'needs prod cloud credentials'},
+      {p:'infra', id:70, t:'Nightly grader cron job',   type:'feature',s:'ready',      g:'pending', roles:['Amp','Codex','Claude']},
+      {p:'infra', id:68, t:'Pin base container images', type:'chore',  s:'done',       g:'green',   roles:['Codex','Pi','Claude']},
+
+      {p:'docs', id:21, t:'Dispatcher config reference', type:'docs', s:'review', g:'green',   roles:['Claude','Pi','Codex']},
+      {p:'docs', id:22, t:'Quickstart: your first issue',type:'docs', s:'ready',  g:'pending', roles:['Pi','Amp','Codex']},
+      {p:'docs', id:19, t:'Roster & roles page',         type:'docs', s:'done',   g:'green',   roles:['Codex','Claude','Pi']},
+      {p:'docs', id:20, t:'Gate failure runbook',        type:'docs', s:'done',   g:'green',   roles:['Amp','Pi','Claude']},
+
+      {p:'web',      id:114, t:'Command palette & shortcuts',  type:'feature', s:'inprogress', g:'running', roles:['Cursor','Factory','Pi']},
+      {p:'checkout', id:49,  t:'Inline card validation',       type:'feature', s:'inprogress', g:'pending', roles:['Cursor','Factory','Claude']},
+      {p:'infra',    id:75,  t:'Preview env per pull request', type:'feature', s:'ready',      g:'pending', roles:['Factory','Cursor','Amp']},
+    ];
+    this.chatRef = React.createRef();
+    this.state = {
+      view:'home', activeProject:'checkout', detail:null, blockedOnly:false,
+      homeMode:'new', homePrompt:'', iv:null, lbBy:'overall',
+      projects: this.PROJECTS.map(p => Object.assign({}, p)),
+      flash:null, theme:((typeof localStorage!=='undefined'&&localStorage.getItem('cc-theme'))||'dark'), issues: I.map(x => Object.assign({}, x)),
+    };
+  }
+
+  componentDidMount(){ this.applyTheme(this.state.theme); }
+  componentDidUpdate(){ const el = this.chatRef && this.chatRef.current; if(el && this.state.view==='interview'){ el.scrollTop = el.scrollHeight; } }
+  applyTheme(t){ try{ document.documentElement.setAttribute('data-cc-theme', t); localStorage.setItem('cc-theme', t); }catch(e){} }
+  toggleTheme(){ const t = this.state.theme==='dark'?'light':'dark'; this.setState({theme:t}); this.applyTheme(t); }
+
+  // ---- mutations ----
+  updateIssue(id, patch){ this.setState(s => ({ issues: s.issues.map(i => i.id===id ? Object.assign({}, i, patch) : i) })); }
+  setFlash(text){ this.setState({ flash:text }); clearTimeout(this._ft); this._ft = setTimeout(() => this.setState({ flash:null }), 2800); }
+  goHome(){ this.setState({ view:'home', detail:null, blockedOnly:false }); window.scrollTo({top:0,behavior:'smooth'}); }
+  goOverview(){ this.setState({ view:'overview', detail:null, blockedOnly:false }); window.scrollTo({top:0,behavior:'smooth'}); }
+  goLeaderboard(){ this.setState({ view:'leaderboard', detail:null }); window.scrollTo({top:0,behavior:'smooth'}); }
+  setLbBy(k){ this.setState({ lbBy:k }); }
+
+  // ---- interview ----
+  flowFor(mode){
+    if(mode==='existing') return [
+      {cat:'Current state', q:"Which project is this, and what’s the pain right now? Be concrete."},
+      {cat:'Problem',       q:"What’s broken or missing today — and how does it show up for a real user?"},
+      {cat:'Outcome',       q:"What does the fixed state look like? How would someone notice the difference?"},
+      {cat:'Constraints',   q:"What can’t we break — contracts, data, public behaviour we must preserve?"},
+      {cat:'Verify',        q:"What should `make verify` assert to prove it’s fixed and stays fixed?"},
+      {cat:'Scope',         q:"What’s explicitly out of scope for this change?"},
+      {cat:'Priority',      q:"What’s the first issue you’d want the dispatcher to pick up?"},
+    ];
+    return [
+      {cat:'Problem',     q:"In a sentence or two — what problem are you solving, and who feels it most?"},
+      {cat:'Outcome',     q:"What does “done” look like for the user? The single most important outcome."},
+      {cat:'Scope',       q:"What’s in scope for the first cut — and what are we deliberately NOT building yet?"},
+      {cat:'Constraints', q:"Any hard constraints? Stack, deadlines, data, compliance, performance budgets."},
+      {cat:'Verify',      q:"Mechanically — what should `make verify` assert so we know it actually works?"},
+      {cat:'Risk',        q:"Where do you expect this to be hardest, or most likely to go wrong?"},
+      {cat:'Priority',    q:"If only one thing could ship this week, what is it?"},
+    ];
+  }
+  setHomeMode(m){ this.setState({ homeMode:m }); }
+  onHomePrompt(v){ this.setState({ homePrompt:v }); }
+  startInterview(){
+    const mode = this.state.homeMode || 'new';
+    const prompt = (this.state.homePrompt||'').trim();
+    if(!prompt){ this.setFlash('Tell me what you want built first.'); return; }
+    const flow = this.flowFor(mode);
+    const intro = (mode==='existing' ? 'Existing project — got it.' : 'New build — let’s go.')
+      + ' I’ll grill you until this is unambiguous; the dispatcher only acts on issues, and issues are only as sharp as this interview.';
+    const iv = { mode, prompt, flow, step:0, input:'', typing:false, probed:false, done:false, answers:{}, covered:{},
+      messages:[ {role:'user', text:prompt}, {role:'assistant', text:intro}, {role:'assistant', text:flow[0].q} ] };
+    this.setState({ view:'interview', iv });
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  ivInput(v){ this.setState(s => ({ iv: Object.assign({}, s.iv, {input:v}) })); }
+  ivSend(){
+    const iv = this.state.iv; if(!iv || iv.done || iv.typing) return;
+    const text = (iv.input||'').trim(); if(!text) return;
+    const cur = iv.flow[iv.step];
+    const msgs = iv.messages.concat([{role:'user', text}]);
+    if(text.length < 14 && !iv.probed){
+      this.setState({ iv: Object.assign({}, iv, {messages: msgs.concat([{role:'assistant', text:'That’s thin. Be specific — give me the concrete detail behind it.'}]), input:'', probed:true}) });
+      return;
+    }
+    const answers = Object.assign({}, iv.answers); answers[cur.cat] = (answers[cur.cat] ? answers[cur.cat]+' ' : '') + text;
+    const covered = Object.assign({}, iv.covered); covered[cur.cat] = true;
+    const next = iv.step + 1;
+    const acks = ['Got it.','Noted.','Makes sense.','Good — that sharpens it.','Logged.','Clear.'];
+    const ack = acks[iv.step % acks.length];
+    this.setState({ iv: Object.assign({}, iv, {messages:msgs, input:'', typing:true, probed:false, answers, covered}) });
+    clearTimeout(this._iv);
+    this._iv = setTimeout(() => {
+      const o = this.state.iv;
+      if(next < iv.flow.length){
+        this.setState({ iv: Object.assign({}, o, {typing:false, step:next, messages: o.messages.concat([{role:'assistant',text:ack},{role:'assistant',text:iv.flow[next].q}])}) });
+      } else {
+        const close = 'That’s enough to act on. Here’s the brief I’ll hand to the dispatcher — review it, then I’ll cut the issues and the loop starts.';
+        this.setState({ iv: Object.assign({}, o, {typing:false, done:true, messages: o.messages.concat([{role:'assistant',text:ack},{role:'assistant',text:close}])}) });
+      }
+    }, 900);
+  }
+  restartInterview(){ this.setState({ view:'home' }); }
+  slug(s){ return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').split('-').filter(Boolean).slice(0,3).join('-'); }
+  createIssues(){
+    const iv = this.state.iv; if(!iv) return;
+    const name = this.slug(iv.prompt) || 'new-build';
+    const pid = 'iv-' + Date.now();
+    const base = 200 + Math.floor(Math.random()*700);
+    const r = this.ROSTER;
+    const cast = (n) => [ r[n%r.length], r[(n+1)%r.length], r[(n+2)%r.length] ];
+    const titles = ['Scaffold project & make verify','Implement the core flow','Wire the mechanical gate','Acceptance checks from the brief','Edge cases & validation'];
+    const types = ['chore','feature','chore','feature','bugfix'];
+    const issues = titles.map((t,i) => ({ p:pid, id:base+i, t, type:types[i], s:'inbox', g:'pending', roles:cast(i) }));
+    this.setState(s => ({
+      projects: s.projects.concat([{id:pid, name, repo:'bannaa/'+name}]),
+      issues: s.issues.concat(issues),
+      view:'board', activeProject:pid, detail:null, blockedOnly:false,
+    }));
+    this.setFlash(issues.length + ' issues created in Inbox — the dispatcher will pick them up.');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  openProject(id){ this.setState({ view:'board', activeProject:id, detail:null, blockedOnly:false }); window.scrollTo({top:0,behavior:'smooth'}); }
+  openIssue(id){ this.setState({ detail:id }); }
+  closeIssue(){ this.setState({ detail:null }); }
+  toggleBlocked(){ this.setState(s => ({ blockedOnly: !s.blockedOnly })); }
+
+  runVerify(id){
+    this.updateIssue(id, {g:'running'});
+    clearTimeout(this['_v'+id]);
+    this['_v'+id] = setTimeout(() => this.updateIssue(id, {g:'green'}), 1300);
+  }
+  promote(id){
+    const it = this.state.issues.find(i => i.id===id); if(!it) return;
+    if(it.blocked){ this.setFlash('#'+id+' is blocked — unblock before advancing.'); return; }
+    const idx = this.ORD.indexOf(it.s); const next = this.ORD[idx+1];
+    if(!next){ this.setFlash('#'+id+' is merged — nothing past Done.'); return; }
+    if(it.s==='inprogress' && next==='review' && it.g!=='green'){
+      this.setFlash('Gate is ' + (it.g==='red'?'red':it.g) + '. make verify must exit 0 before review.'); return;
+    }
+    this.updateIssue(id, {s:next, reviewReason: (it.s==='inprogress'? undefined : it.reviewReason)});
+    if(next==='done') this.setFlash('#'+id+' merged. ✓ final.');
+    else if(next==='review') this.setFlash('#'+id+' → Review. reviewer reachable (green gate).');
+    else this.setFlash('#'+id+' → ' + this.LABEL[next] + '.');
+  }
+
+  // ---- helpers ----
+  gateVM(g){
+    if(g==='green')   return {text:'✓ exit 0',   color:'var(--amber)', style:{fontFamily:"'JetBrains Mono',monospace",fontSize:'11px',fontWeight:600,color:'var(--amber)',background:'rgba(244,181,63,.13)',border:'1px solid var(--amber-bd)',borderRadius:'6px',padding:'2px 8px'}};
+    if(g==='red')     return {text:'✗ verify',   color:'var(--red)', style:{fontFamily:"'JetBrains Mono',monospace",fontSize:'11px',fontWeight:600,color:'var(--red)',background:'rgba(229,96,77,.12)',border:'1px solid var(--red-bd)',borderRadius:'6px',padding:'2px 8px'}};
+    if(g==='running') return {text:'running…',   color:'var(--cyan2)', style:{fontFamily:"'JetBrains Mono',monospace",fontSize:'11px',fontWeight:600,color:'var(--cyan2)',background:'rgba(95,179,201,.12)',border:'1px solid var(--cyan-bd)',borderRadius:'6px',padding:'2px 8px',animation:'ccrun 1.2s infinite'}};
+    return {text:'gate ○', color:'var(--faint)', style:{fontFamily:"'JetBrains Mono',monospace",fontSize:'11px',color:'var(--faint)',border:'1px solid var(--bd4)',borderRadius:'6px',padding:'2px 8px'}};
+  }
+  roleChip(role, name){
+    const violet = role==='R';
+    return { name, role:(role==='P'?'planner':role==='E'?'executor':'reviewer'), title:(role==='P'?'planner':role==='E'?'executor':'reviewer')+' · '+name,
+      style:{ fontFamily:"'JetBrains Mono',monospace", fontSize:'10.5px', color: violet?'var(--violet-ink)':'var(--tx-mut2)',
+        border:'1px solid '+(violet?'var(--violet-bd)':'var(--bd3)'), background: violet?'rgba(155,135,245,.08)':'var(--chip)', borderRadius:'5px', padding:'2px 7px' } };
+  }
+  chipsFor(it){ return [ this.roleChip('P', it.roles[0]), this.roleChip('E', it.roles[1]), this.roleChip('R', it.roles[2]) ]; }
+
+  renderVals(){
+    const st = this.state;
+    const all = st.issues;
+    const onHome = () => this.goHome();
+
+    // ---------- OVERVIEW ----------
+    const active = all.filter(i => i.s!=='done').length;
+    const inprog = all.filter(i => i.s==='inprogress').length;
+    const awaiting = all.filter(i => i.s==='review' && i.g==='green').length;
+    const red = all.filter(i => i.g==='red').length;
+    const blocked = all.filter(i => i.blocked).length;
+    const statCell = (accent) => ({ border:'1px solid '+(accent?accent+'55':'var(--bd1b)'), background:'var(--surface1)', borderRadius:'13px', padding:'15px 16px', display:'flex', flexDirection:'column', gap:'5px' });
+    const bigVal = (c) => ({ fontFamily:"'Geist',sans-serif", fontSize:'27px', fontWeight:600, color:c||'var(--tx0)', lineHeight:1, letterSpacing:'-.02em' });
+    const stats = [
+      { label:'Active', value:String(active), hint:'open issues', style:statCell(), valueStyle:bigVal() },
+      { label:'In progress', value:String(inprog), hint:'agents working', style:statCell(), valueStyle:bigVal('var(--cyan2)') },
+      { label:'Awaiting your merge', value:String(awaiting), hint:'green · your turn', style:statCell('var(--amber-bd)'), valueStyle:bigVal('var(--amber)') },
+      { label:'Gates red', value:String(red), hint:'verify failing', style:statCell(red?'var(--red-bd)':null), valueStyle:bigVal(red?'var(--red)':'var(--tx0)') },
+      { label:'Blocked', value:String(blocked), hint:'flagged', style:statCell(), valueStyle:bigVal(blocked?'var(--gold)':'var(--tx0)') },
+    ];
+
+    const agents = this.ROSTER.map(name => {
+      const act = all.filter(i => i.roles.indexOf(name)>=0 && i.s!=='done').length;
+      const execNow = all.some(i => i.roles[1]===name && i.s==='inprogress');
+      const revNow = all.some(i => i.roles[2]===name && i.s==='review');
+      return { name, init:name.slice(0,2).toLowerCase(), active:String(act),
+        detail: execNow? 'executing now' : (revNow? 'reviewing' : (act? 'assigned · idle' : 'free')),
+        dotStyle:{ width:'7px', height:'7px', borderRadius:'50%', background: execNow?'var(--cyan)':(revNow?'var(--violet)':'var(--dot-idle)'), animation: execNow?'ccrun 1.4s infinite':'none', display:'inline-block' } };
+    });
+
+    const projects = st.projects.map(p => {
+      const list = all.filter(i => i.p===p.id);
+      const total = list.length || 1;
+      const counts = {}; this.ORD.forEach(k => counts[k]=0); list.forEach(i => counts[i.s]++);
+      const done = counts.done; const pct = Math.round(done/total*100);
+      const segs = this.ORD.filter(k => counts[k]>0).map(k => ({ style:{ width:(counts[k]/total*100)+'%', background:this.ACC[k] } }));
+      const legend = this.ORD.filter(k => counts[k]>0).map(k => ({ text: counts[k]+' '+this.LABEL[k].toLowerCase(), dot:{ width:'8px',height:'8px',borderRadius:'2px',background:this.ACC[k],display:'inline-block' } }));
+      const aMerge = list.filter(i => i.s==='review' && i.g==='green').length;
+      const aRed = list.filter(i => i.g==='red').length;
+      const aBlk = list.filter(i => i.blocked).length;
+      const badge = (text,c,bg,bd) => ({ text, style:{ fontFamily:"'JetBrains Mono',monospace", fontSize:'11px', fontWeight:600, color:c, background:bg, border:'1px solid '+bd, borderRadius:'999px', padding:'3px 10px' } });
+      const badges = [];
+      if(aMerge) badges.push(badge(aMerge+' await merge','var(--amber)','rgba(244,181,63,.1)','var(--amber-bd)'));
+      if(aRed)   badges.push(badge(aRed+' gate red','var(--red)','rgba(229,96,77,.1)','var(--red-bd)'));
+      if(aBlk)   badges.push(badge(aBlk+' blocked','var(--gold)','rgba(203,178,126,.08)','var(--amber-bd2)'));
+      if(!badges.length) badges.push(badge('on track','var(--blue)','rgba(138,166,204,.08)','var(--bd5)'));
+      return { id:p.id, name:p.name, repo:p.repo, pct:String(pct), segs, legend, badges, onClick:()=>this.openProject(p.id) };
+    });
+
+    // ---------- BOARD ----------
+    const proj = st.projects.find(p => p.id===st.activeProject) || st.projects[0];
+    let boardList = all.filter(i => i.p===proj.id);
+    if(st.blockedOnly) boardList = boardList.filter(i => i.blocked);
+    const board = this.COLS.map(col => {
+      const cards = boardList.filter(i => i.s===col.key).map(it => {
+        const gv = this.gateVM(it.g);
+        return { id:it.id, title:it.t, typeLabel:it.type, blocked: !!it.blocked, reviewReason: it.reviewReason||'',
+          chips:this.chipsFor(it), gateText:gv.text, gateStyle:gv.style, onClick:()=>this.openIssue(it.id),
+          cardStyle:{ border:'1px solid '+(it.blocked?'var(--red-bd-soft)':'var(--bd2)'), borderLeft:'2px solid '+(it.blocked?'var(--red)':col.accent), background:'var(--surface2)', borderRadius:'11px', padding:'13px 14px', cursor:'pointer', transition:'border-color .18s, transform .18s' } };
+      });
+      return { key:col.key, label:col.label, accent:col.accent, count:String(cards.length), cards, empty: cards.length===0 };
+    });
+    const pills = st.projects.map(p => ({ name:p.name, onClick:()=>this.openProject(p.id),
+      style:{ fontFamily:"'JetBrains Mono',monospace", fontSize:'12px', cursor:'pointer', borderRadius:'8px', padding:'7px 12px',
+        color: p.id===proj.id?'var(--ink-fg)':'var(--tx-mut)', background: p.id===proj.id?'var(--ink)':'var(--surface2)', border:'1px solid '+(p.id===proj.id?'var(--ink)':'var(--bd2b)'), fontWeight: p.id===proj.id?600:400 } }));
+    const blockedFilterStyle = { fontFamily:"'JetBrains Mono',monospace", fontSize:'12px', cursor:'pointer', borderRadius:'8px', padding:'7px 12px',
+      color: st.blockedOnly?'var(--red)':'var(--tx-mut3)', background: st.blockedOnly?'rgba(229,96,77,.1)':'transparent', border:'1px solid '+(st.blockedOnly?'var(--red-bd)':'var(--bd2b)') };
+
+    // ---------- DETAIL ----------
+    let d = null;
+    if(st.detail!=null){
+      const it = all.find(i => i.id===st.detail);
+      if(it){
+        const gv = this.gateVM(it.g);
+        const stAcc = this.ACC[it.s];
+        const cast = [
+          { role:'planner',  name:it.roles[0], note:'drafts the plan', roleStyle:this.detRole('var(--tx-mut2)','var(--bd3)','var(--chip)') },
+          { role:'executor', name:it.roles[1], note:'writes & runs the gate', roleStyle:this.detRole('var(--tx-mut2)','var(--bd3)','var(--chip)') },
+          { role:'reviewer', name:it.roles[2], note:'signs off on green', roleStyle:this.detRole('var(--violet-ink)','var(--violet-bd)','rgba(155,135,245,.08)') },
+        ];
+        const idx = this.ORD.indexOf(it.s); const next = this.ORD[idx+1];
+        let pOk=true, pLabel, pHint;
+        if(it.blocked){ pOk=false; pLabel='Blocked'; pHint='Unblock this issue before it can advance.'; }
+        else if(!next){ pOk=false; pLabel='Merged — done'; pHint='This issue is merged. Nothing comes after Done.'; }
+        else if(it.s==='inprogress' && next==='review' && it.g!=='green'){ pOk=false; pLabel='Gate must pass first'; pHint='The reviewer is unreachable on a red build. Run make verify until it exits 0.'; }
+        else {
+          pLabel = next==='done' ? 'Merge — final ✓' : next==='review' ? 'Send to review' : 'Advance to '+this.LABEL[next];
+          pHint = next==='done' ? 'Your merge is final. No agent ships code — only you do.' : next==='review' ? 'Reviewer reachable — the gate is green.' : 'Move this issue to '+this.LABEL[next]+'.';
+        }
+        const showRun = it.s==='inprogress';
+        const runText = '{ "t":"edit",   "issue":'+it.id+' }\n{ "t":"verify", "cmd":"make verify" }\n' + (it.g==='green' ? '{ "t":"gate",   "result":"exit 0", "ok":true }\n' : it.g==='red' ? '{ "t":"gate",   "result":"exit 1", "ok":false }\n' : '{ "t":"gate",   "status":"running" }\n');
+        const gateNote = it.g==='green' ? 'Green. The reviewer is reachable; your merge is the last step.' : it.g==='red' ? 'Failed. The reviewer cannot be reached until this exits 0.' : it.g==='running' ? 'The dispatcher is running the gate now.' : 'Not yet run. The dispatcher runs make verify — never the agent.';
+        d = {
+          id:it.id, title:it.t, typeLabel:it.type, blocked: !!it.blocked, blockedReason: it.blocked||'',
+          stateLabel:this.LABEL[it.s], stateStyle:{ fontFamily:"'JetBrains Mono',monospace", fontSize:'10.5px', fontWeight:600, color:stAcc, border:'1px solid '+stAcc+'66', background:stAcc+'18', borderRadius:'5px', padding:'2px 8px' },
+          cast, gateText:gv.text, gateStyle:gv.style, gateColor:gv.color, gateBorder:(it.g==='green'?'var(--amber-bd2)':it.g==='red'?'var(--red-bd)':'var(--bd1b)'), gateBg:(it.g==='green'?'rgba(244,181,63,.06)':it.g==='red'?'rgba(229,96,77,.05)':'var(--surface1)'), gateNote,
+          canVerify: (it.g==='red'||it.g==='pending') && it.s==='inprogress', onVerify:()=>this.runVerify(it.id),
+          showRun, runText,
+          reviewReason: it.reviewReason||'', reviewNote: this.NOTES[it.id]||'see thread',
+          onPromote:()=>this.promote(it.id),
+          promoteLabel:pLabel, promoteHint:pHint,
+          promoteStyle: pOk
+            ? { fontFamily:"'JetBrains Mono',monospace", fontSize:'13px', fontWeight:600, cursor:'pointer', width:'100%', color:'var(--on-accent)', background:'var(--amber)', border:'none', borderRadius:'10px', padding:'12px' }
+            : { fontFamily:"'JetBrains Mono',monospace", fontSize:'13px', fontWeight:600, cursor:'not-allowed', width:'100%', color:'var(--faint)', background:'var(--surface2)', border:'1px solid var(--bd2b)', borderRadius:'10px', padding:'12px' },
+        };
+      }
+    }
+
+    // ---------- LEADERBOARD ----------
+    const by = st.lbBy;
+    const metricOf = (name) => by==='overall' ? this.RATINGS[name].overall : this.RATINGS[name].roles[by];
+    const lbSeg = [['overall','Overall'],['planner','Planner'],['executor','Executor'],['reviewer','Reviewer']].map(([k,label]) => ({ label, onClick:()=>this.setLbBy(k),
+      style:{ fontFamily:"'JetBrains Mono',monospace", fontSize:'12px', fontWeight:600, cursor:'pointer', borderRadius:'8px', padding:'7px 13px', whiteSpace:'nowrap',
+        color: by===k?'var(--ink-fg)':'var(--tx-mut)', background: by===k?'var(--ink)':'var(--surface2)', border:'1px solid '+(by===k?'var(--ink)':'var(--bd2b)') } }));
+    const trendVM = (t) => ({ txt:(t>=0?'▲ +':'▼ ')+Math.abs(t).toFixed(1), style:{ fontFamily:"'JetBrains Mono',monospace", fontSize:'11.5px', color: t>=0?'var(--cyan2)':'var(--red)', flex:'0 0 auto', width:'52px', textAlign:'right' } });
+    const ranked = this.ROSTER.slice().sort((a,b) => metricOf(b)-metricOf(a));
+    const lbRows = ranked.map((name,i) => {
+      const r = this.RATINGS[name]; const v = metricOf(name);
+      const rolesArr = [['P','planner',r.roles.planner],['E','executor',r.roles.executor],['R','reviewer',r.roles.reviewer]];
+      return { rank:i+1, name, init:name.slice(0,2).toLowerCase(), score:v.toFixed(1), merge:Math.round(r.merge*100)+'%', trend:trendVM(r.trend),
+        barStyle:{ width:(v/10*100)+'%', height:'100%', background: i===0?'var(--amber)':'var(--blue)', borderRadius:'4px' },
+        roleChips: rolesArr.map(([k,role,val]) => ({ k, v:val.toFixed(1), style:{ fontFamily:"'JetBrains Mono',monospace", fontSize:'10.5px', whiteSpace:'nowrap',
+          color: (by===role)?'var(--amber)':'var(--tx-mut3)', border:'1px solid '+((by===role)?'var(--amber-bd)':'var(--bd3)'), background:(by===role)?'rgba(244,181,63,.08)':'var(--chip)', borderRadius:'5px', padding:'2px 7px' } })),
+        rowStyle:{ display:'flex', alignItems:'center', gap:'13px', flexWrap:'wrap', padding:'14px 16px', borderRadius:'12px', border:'1px solid '+(i===0?'var(--amber-bd)':'var(--bd2)'), background: i===0?'rgba(244,181,63,.06)':'var(--surface2)' },
+        rankStyle:{ fontFamily:"'JetBrains Mono',monospace", fontWeight:700, fontSize:'15px', width:'24px', textAlign:'center', flex:'0 0 auto', color: i===0?'var(--amber)':i===1?'var(--tx2)':i===2?'var(--gold)':'var(--faint)' } };
+    });
+    const champ = (() => { const name=ranked[0], r=this.RATINGS[name], v=metricOf(name);
+      return { name, init:name.slice(0,2).toLowerCase(), score:v.toFixed(1), metricLabel:(by==='overall'?'overall':by)+' score', n:String(r.n), merge:Math.round(r.merge*100)+'%', trend:trendVM(r.trend) }; })();
+    const byBest = this.TYPES.map(t => { let best=this.ROSTER[0], bv=-1; this.ROSTER.forEach(n => { const s=this.RATINGS[n].types[t]; if(s>bv){ bv=s; best=n; } });
+      return { type:t, agent:best, score:bv.toFixed(1), barStyle:{ width:(bv/10*100)+'%', height:'100%', background:'var(--amber)', borderRadius:'3px' } }; });
+    const lb = { seg:lbSeg, rows:lbRows, champ, byBest };
+
+    // ---------- HOME ----------
+    const hm = st.homeMode;
+    const modeBtn = (m,label) => ({ label, onClick:()=>this.setHomeMode(m),
+      style:{ fontFamily:"'JetBrains Mono',monospace", fontSize:'12.5px', fontWeight:600, cursor:'pointer', borderRadius:'8px', padding:'8px 14px', whiteSpace:'nowrap',
+        color: hm===m?'var(--ink-fg)':'var(--tx-mut)', background: hm===m?'var(--ink)':'var(--surface2)', border:'1px solid '+(hm===m?'var(--ink)':'var(--bd2b)') } });
+    const homeModes = [ modeBtn('new','+ new project'), modeBtn('existing','existing project') ];
+
+    // ---------- INTERVIEW ----------
+    let iv = null;
+    if(st.iv){
+      const o = st.iv;
+      const messages = o.messages.map(m => {
+        const me = m.role==='user';
+        return { who: me?'you':'interviewer', text:m.text,
+          rowStyle:{ display:'flex', justifyContent: me?'flex-end':'flex-start' },
+          labelStyle:{ fontFamily:"'JetBrains Mono',monospace", fontSize:'10.5px', letterSpacing:'.08em', textTransform:'uppercase', color: me?'var(--faint)':'var(--amber)', marginBottom:'5px', textAlign: me?'right':'left' },
+          bubbleStyle:{ borderRadius: me?'14px 14px 4px 14px':'14px 14px 14px 4px', padding:'12px 15px', fontSize:'15px', lineHeight:1.55,
+            background: me?'var(--chip)':'var(--surface2)', color:'var(--tx0)', border:'1px solid '+(me?'var(--bd3)':'var(--bd1b)') } };
+      });
+      const cats = o.flow.map(f => f.cat);
+      const coverage = cats.map(c => ({ name:c,
+        dot:{ width:'8px', height:'8px', borderRadius:'2px', flex:'0 0 auto', background: o.covered[c]?'var(--amber)':'var(--bd4)' },
+        style:{ display:'flex', alignItems:'center', gap:'9px', padding:'7px 0', fontSize:'13px', color: o.covered[c]?'var(--tx0)':'var(--tx-mut3)' } }));
+      const doneCount = cats.filter(c => o.covered[c]).length;
+      const summary = o.done ? cats.filter(c => o.answers[c]).map(c => ({ label:c, val:o.answers[c] })) : [];
+      const canSend = !!(o.input && o.input.trim()) && !o.typing;
+      iv = { modeLabel: o.mode==='existing'?'existing project':'new build', messages, coverage,
+        coverageLabel: doneCount+' / '+cats.length+' covered', typing:o.typing, done:o.done, input:o.input, summary,
+        onInput:(e)=>this.ivInput(e.target.value),
+        onKey:(e)=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); this.ivSend(); } },
+        onSend:()=>this.ivSend(), onRestart:()=>this.restartInterview(), onCreate:()=>this.createIssues(),
+        sendStyle:{ fontFamily:"'JetBrains Mono',monospace", fontSize:'13px', fontWeight:600, cursor:canSend?'pointer':'not-allowed', color:'var(--on-accent)', background:canSend?'var(--amber)':'var(--bd4)', border:'none', borderRadius:'9px', padding:'12px 16px', flex:'0 0 auto' } };
+    }
+
+    return {
+      isOverview: st.view==='overview', isBoard: st.view==='board', isHome: st.view==='home', isInterview: st.view==='interview',
+      onHome, onOverview:()=>this.goOverview(), onClose:()=>this.closeIssue(), onToggleBlocked:()=>this.toggleBlocked(),
+      navNewStyle:{ padding:'6px 11px', borderRadius:'7px', cursor:'pointer', color:(st.view==='home'||st.view==='interview')?'var(--tx0)':'var(--tx-mut)', background:(st.view==='home'||st.view==='interview')?'var(--chip)':'transparent' },
+      homeModes, homePrompt: st.homePrompt, onHomePrompt:(e)=>this.onHomePrompt(e.target.value), onStart:()=>this.startInterview(),
+      homeActive:String(active), homeAwaiting:String(awaiting), homeRed:String(red), iv, chatRef:this.chatRef,
+      isLeaderboard: st.view==='leaderboard', onLeaderboard:()=>this.goLeaderboard(), lb,
+      navLbStyle:{ padding:'6px 11px', borderRadius:'7px', cursor:'pointer', color: st.view==='leaderboard'?'var(--tx0)':'var(--tx-mut)', background: st.view==='leaderboard'?'var(--chip)':'transparent' },
+      navOverviewStyle:{ padding:'6px 11px', borderRadius:'7px', cursor:'pointer', color: st.view==='overview'?'var(--tx0)':'var(--tx-mut)', background: st.view==='overview'?'var(--chip)':'transparent' },
+      stats, agents, projects,
+      board, pills, blockedFilterStyle, boardName:proj.name, boardRepo:proj.repo,
+      detail: st.detail, d,
+      flash: st.flash, onToggleTheme:()=>this.toggleTheme(), themeIcon: st.theme==='dark'?'☀ light':'☾ dark',
+    };
+  }
+  detRole(color, bd, bg){ return { fontFamily:"'JetBrains Mono',monospace", fontSize:'10.5px', fontWeight:600, color, border:'1px solid '+bd, background:bg, borderRadius:'5px', padding:'2px 8px', flex:'0 0 auto', width:'66px', textAlign:'center' }; }
+}
+</script>
+</body>
+</html>

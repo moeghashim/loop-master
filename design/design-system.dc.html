@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0c11;--surface0:#0c0f15;--surface1:#0d1117;--surface2:#11151d;--chip:#161c26;--track:#1a2130;--violet-surface:#13111c;--flash-bg:#241a0b;
+    --bd0:#161d27;--bd0b:#1a212c;--bd1:#1c2330;--bd1b:#1f2734;--bd2:#222a37;--bd2b:#232b39;--bd3:#262e3c;--bd4:#2a3342;--bd5:#2f3b50;--dot-idle:#39424f;--bd-hover:#3a4760;
+    --violet-bd2:#2c2745;--violet-bd:#3a3160;--cyan-bd:#2f5a66;--red-bd-soft:#3a2a26;--red-bd:#6e3128;--amber-bd:#6f5520;--amber-bd2:#5a4a1f;
+    --tx0:#e7ebf2;--tx0b:#dfe5ee;--tx2:#cdd6e3;--tx-mut:#98a2b3;--tx-mut2:#9aa3b2;--tx-mut3:#8b94a4;--eyebrow:#707a89;--faint:#6b7686;--faint2:#5e6675;--faintest:#454e5d;
+    --amber:#f4b53f;--red:#e5604d;--violet:#9b87f5;--cyan:#5fb3c9;--cyan2:#7fd0e0;--blue:#8aa6cc;--gold:#cbb27e;--violet-ink:#b3a6e8;--violet-ink2:#cdc3f5;--red-ink:#e9a99d;--flash-ink:#eed9a0;
+    --on-accent:#0a0c11;--ink:#cdd6e3;--ink-fg:#0a0c11;--code-bg:#0a0c11;--header-bg:rgba(10,12,17,.78);--shadow-lg:rgba(0,0,0,.7);
+  }
+  html[data-cc-theme="light"]{
+    --bg:#f3f4f7;--surface0:#ffffff;--surface1:#fbfcfd;--surface2:#ffffff;--chip:#edf0f5;--track:#e6e9f0;--violet-surface:#f5f2fc;--flash-bg:#fcf4dd;
+    --bd0:#e7eaf1;--bd0b:#e4e8ef;--bd1:#e6e9f0;--bd1b:#e0e4ec;--bd2:#dce1ea;--bd2b:#d9dee7;--bd3:#d5dbe4;--bd4:#ccd3df;--bd5:#c2cbda;--dot-idle:#c4cad4;--bd-hover:#aebbcf;
+    --violet-bd2:#ddd4f3;--violet-bd:#d6cbf2;--cyan-bd:#b6dee6;--red-bd-soft:#f0cabf;--red-bd:#f0bdb1;--amber-bd:#e6cd92;--amber-bd2:#e6cd92;
+    --tx0:#1b212b;--tx0b:#2a313d;--tx2:#2b3340;--tx-mut:#586374;--tx-mut2:#5e6a7b;--tx-mut3:#66707f;--eyebrow:#79828f;--faint:#7c8593;--faint2:#99a1ad;--faintest:#aeb4bf;
+    --amber:#b87d10;--red:#d23f29;--violet:#6d54e0;--cyan:#1f8fa8;--cyan2:#1f8fa8;--blue:#4f6f9e;--gold:#8a6a28;--violet-ink:#6d54e0;--violet-ink2:#5a48c0;--red-ink:#b13a26;--flash-ink:#6b5418;
+    --on-accent:#0a0c11;--ink:#1b212b;--ink-fg:#f3f4f7;--code-bg:#eef1f6;--header-bg:rgba(243,244,247,.82);--shadow-lg:rgba(33,45,66,.16);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;scroll-padding-top:70px;}
+  body{margin:0;background:var(--bg);color:var(--tx0);font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s;}
+  ::selection{background:rgba(244,181,63,.28);}
+  a{color:inherit;text-decoration:none;}
+  @keyframes ccpulse{0%,100%{box-shadow:0 0 0 0 rgba(244,181,63,.45)}70%{box-shadow:0 0 0 7px rgba(244,181,63,0)}}
+  @keyframes ccrun{0%,100%{opacity:1}50%{opacity:.4}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;">
+  <!-- HEADER -->
+  <header style="position:sticky;top:0;z-index:40;backdrop-filter:blur(10px);background:var(--header-bg);border-bottom:1px solid var(--bd0b);">
+    <div style="max-width:1200px;margin:0 auto;padding:12px clamp(16px,3vw,32px);display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 7px rgba(244,181,63,.5));"><path d="M21 12a9 9 0 1 1-3.4-7"></path><path d="M21 4v5h-5"></path></svg>
+        <span style="font-family:'JetBrains Mono',monospace;font-weight:600;font-size:15px;white-space:nowrap;">Loop Master</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);border:1px solid var(--bd2b);border-radius:5px;padding:2px 7px;">design system</span>
+      </div>
+      <nav style="display:flex;gap:2px;margin-left:6px;font-family:'JetBrains Mono',monospace;font-size:12.5px;flex-wrap:wrap;">
+        <a href="#color" style="padding:6px 10px;border-radius:7px;color:var(--tx-mut);">color</a>
+        <a href="#type" style="padding:6px 10px;border-radius:7px;color:var(--tx-mut);">type</a>
+        <a href="#space" style="padding:6px 10px;border-radius:7px;color:var(--tx-mut);">spacing</a>
+        <a href="#components" style="padding:6px 10px;border-radius:7px;color:var(--tx-mut);">components</a>
+      </nav>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:10px;">
+        <a href="Console.dc.html" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--tx-mut);border:1px solid var(--bd2b);border-radius:8px;padding:6px 11px;">console →</a>
+        <button onClick="{{onToggleTheme}}" style="font-family:'JetBrains Mono',monospace;font-size:12px;cursor:pointer;color:var(--tx-mut);background:var(--surface2);border:1px solid var(--bd2b);border-radius:8px;padding:6px 11px;">{{themeIcon}}</button>
+      </div>
+    </div>
+  </header>
+
+  <main style="max-width:1200px;margin:0 auto;padding:clamp(34px,5vw,64px) clamp(16px,3vw,32px) 90px;">
+    <!-- HERO -->
+    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--eyebrow);">Visual language</div>
+    <h1 style="margin:12px 0 0;font-weight:600;font-size:clamp(28px,4.4vw,48px);letter-spacing:-.025em;line-height:1.05;">Loop Master — Design System</h1>
+    <p style="margin:16px 0 0;font-size:17px;line-height:1.6;color:var(--tx-mut);max-width:64ch;">A mission-control language for orchestrating coding agents. Dark by default, fully themeable. Color is sparing and load-bearing — every hue means something.</p>
+
+    <!-- SEMANTIC LEGEND -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:30px;">
+      <sc-for list="{{semantics}}" as="s" hint-placeholder-count="5">
+        <div style="border:1px solid var(--bd1b);background:var(--surface1);border-radius:13px;padding:15px 16px;">
+          <div style="display:flex;align-items:center;gap:9px;"><span style="{{s.dot}}"></span><span style="font-family:'JetBrains Mono',monospace;font-weight:600;font-size:13px;">{{s.name}}</span></div>
+          <div style="font-size:12.5px;color:var(--tx-mut);margin-top:8px;line-height:1.45;">{{s.note}}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- COLOR -->
+    <h2 id="color" style="margin:56px 0 0;font-weight:600;font-size:clamp(22px,3vw,32px);letter-spacing:-.02em;">Color</h2>
+    <p style="margin:10px 0 0;font-size:15px;color:var(--tx-mut);max-width:60ch;">Every value is a CSS variable with a dark and light resolution. Token name first, then <span style="font-family:'JetBrains Mono',monospace;">dark · light</span>.</p>
+
+    <sc-for list="{{colorGroups}}" as="grp" hint-placeholder-count="4">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;color:var(--eyebrow);text-transform:uppercase;margin:26px 0 12px;">{{grp.title}}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;">
+        <sc-for list="{{grp.items}}" as="c" hint-placeholder-count="6">
+          <div style="border:1px solid var(--bd1b);background:var(--surface1);border-radius:12px;overflow:hidden;">
+            <div style="{{c.swatch}}"></div>
+            <div style="padding:10px 11px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--tx0);">{{c.token}}</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--faint);margin-top:3px;">{{c.vals}}</div>
+              <div style="font-size:11.5px;color:var(--tx-mut);margin-top:5px;line-height:1.35;">{{c.note}}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+
+    <!-- TYPE -->
+    <h2 id="type" style="margin:56px 0 0;font-weight:600;font-size:clamp(22px,3vw,32px);letter-spacing:-.02em;">Typography</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:22px;">
+      <div style="flex:1 1 300px;border:1px solid var(--bd1b);background:var(--surface1);border-radius:14px;padding:22px;">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;">
+          <span style="font-weight:600;font-size:15px;">Geist</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);">sans · prose & UI</span>
+        </div>
+        <div style="font-size:40px;font-weight:600;letter-spacing:-.02em;margin-top:14px;line-height:1;">Aa Gg 24</div>
+        <div style="font-size:14px;color:var(--tx-mut);margin-top:14px;line-height:1.6;">Used for headings, body copy and labels. Weights 400 / 500 / 600. Tight tracking on display sizes.</div>
+      </div>
+      <div style="flex:1 1 300px;border:1px solid var(--bd1b);background:var(--surface1);border-radius:14px;padding:22px;">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-weight:600;font-size:15px;">JetBrains Mono</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);">mono · IDs, code, labels</span>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:40px;font-weight:600;margin-top:14px;line-height:1;">Aa #42</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--tx-mut);margin-top:14px;line-height:1.6;">make verify → exit 0<br>issue #42 · executor=Codex</div>
+      </div>
+    </div>
+    <div style="border:1px solid var(--bd1b);background:var(--surface1);border-radius:14px;padding:8px 22px;margin-top:14px;">
+      <sc-for list="{{typeScale}}" as="t" hint-placeholder-count="5">
+        <div style="display:flex;align-items:baseline;gap:16px;padding:12px 0;border-bottom:1px solid var(--bd0);">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);width:78px;flex:0 0 auto;">{{t.meta}}</span>
+          <span style="{{t.style}}">{{t.sample}}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- SPACING / RADIUS -->
+    <h2 id="space" style="margin:56px 0 0;font-weight:600;font-size:clamp(22px,3vw,32px);letter-spacing:-.02em;">Radius &amp; structure</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:22px;">
+      <div style="flex:1 1 320px;border:1px solid var(--bd1b);background:var(--surface1);border-radius:14px;padding:22px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;color:var(--eyebrow);text-transform:uppercase;">Radius</div>
+        <div style="display:flex;gap:14px;align-items:flex-end;margin-top:18px;flex-wrap:wrap;">
+          <sc-for list="{{radii}}" as="r" hint-placeholder-count="4">
+            <div style="text-align:center;">
+              <div style="{{r.box}}"></div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--tx-mut);margin-top:8px;">{{r.label}}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="flex:1 1 320px;border:1px solid var(--bd1b);background:var(--surface1);border-radius:14px;padding:22px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;color:var(--eyebrow);text-transform:uppercase;">Borders &amp; elevation</div>
+        <div style="display:flex;flex-direction:column;gap:11px;margin-top:18px;">
+          <div style="border:1px solid var(--bd2b);border-radius:10px;padding:11px 14px;font-size:13px;color:var(--tx-mut);background:var(--surface2);">1px hairline · <span style="font-family:'JetBrains Mono',monospace;">--bd2b</span> on <span style="font-family:'JetBrains Mono',monospace;">--surface2</span></div>
+          <div style="border:1px solid var(--bd1b);border-radius:10px;padding:11px 14px;font-size:13px;color:var(--tx-mut);background:var(--surface1);box-shadow:0 14px 36px -20px var(--shadow-lg);">soft elevation · <span style="font-family:'JetBrains Mono',monospace;">--shadow-lg</span></div>
+          <div style="border-left:2px solid var(--amber);border-radius:4px;padding:9px 14px;font-size:13px;color:var(--tx-mut);background:var(--surface2);">2px status edge · accent left-border</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPONENTS -->
+    <h2 id="components" style="margin:56px 0 0;font-weight:600;font-size:clamp(22px,3vw,32px);letter-spacing:-.02em;">Components</h2>
+    <p style="margin:10px 0 0;font-size:15px;color:var(--tx-mut);max-width:60ch;">Live examples — toggle the theme to see each adapt. Pulled from the explainer and the operator console.</p>
+
+    <!-- buttons + chips -->
+    <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:24px;">
+      <div style="flex:1 1 300px;border:1px solid var(--bd1b);background:var(--surface1);border-radius:14px;padding:20px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;color:var(--eyebrow);text-transform:uppercase;">Buttons</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;align-items:center;">
+          <button style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;cursor:pointer;color:var(--on-accent);background:var(--amber);border:none;border-radius:9px;padding:9px 15px;">▸ run make verify</button>
+          <button style="font-family:'JetBrains Mono',monospace;font-size:13px;cursor:pointer;color:var(--tx2);background:var(--chip);border:1px solid var(--bd4);border-radius:9px;padding:9px 14px;">prev</button>
+          <button style="font-family:'JetBrains Mono',monospace;font-size:13px;cursor:pointer;color:var(--tx-mut3);background:transparent;border:1px solid var(--bd2b);border-radius:9px;padding:9px 14px;">reset</button>
+          <button style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;cursor:not-allowed;color:var(--faint);background:var(--surface2);border:1px solid var(--bd2b);border-radius:9px;padding:9px 14px;">gate must pass</button>
+        </div>
+      </div>
+      <div style="flex:1 1 300px;border:1px solid var(--bd1b);background:var(--surface1);border-radius:14px;padding:20px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;color:var(--eyebrow);text-transform:uppercase;">Attention badges</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--amber);background:rgba(244,181,63,.1);border:1px solid var(--amber-bd);border-radius:999px;padding:3px 10px;">2 await merge</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--red);background:rgba(229,96,77,.1);border:1px solid var(--red-bd);border-radius:999px;padding:3px 10px;">1 gate red</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--gold);background:rgba(203,178,126,.08);border:1px solid var(--amber-bd2);border-radius:999px;padding:3px 10px;">1 blocked</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--blue);background:rgba(138,166,204,.08);border:1px solid var(--bd5);border-radius:999px;padding:3px 10px;">on track</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- gate chips + role chips + state labels -->
+    <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:14px;">
+      <div style="flex:1 1 230px;border:1px solid var(--bd1b);background:var(--surface1);border-radius:14px;padding:20px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;color:var(--eyebrow);text-transform:uppercase;">Gate status</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--amber);background:rgba(244,181,63,.13);border:1px solid var(--amber-bd);border-radius:6px;padding:2px 8px;">✓ exit 0</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--red);background:rgba(229,96,77,.12);border:1px solid var(--red-bd);border-radius:6px;padding:2px 8px;">✗ verify</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--cyan2);background:rgba(95,179,201,.12);border:1px solid var(--cyan-bd);border-radius:6px;padding:2px 8px;animation:ccrun 1.2s infinite;">running…</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);border:1px solid var(--bd4);border-radius:6px;padding:2px 8px;">gate ○</span>
+        </div>
+      </div>
+      <div style="flex:1 1 230px;border:1px solid var(--bd1b);background:var(--surface1);border-radius:14px;padding:20px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;color:var(--eyebrow);text-transform:uppercase;">Role chips</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--tx-mut2);border:1px solid var(--bd3);background:var(--chip);border-radius:5px;padding:2px 7px;">Claude</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--tx-mut2);border:1px solid var(--bd3);background:var(--chip);border-radius:5px;padding:2px 7px;">Codex</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--violet-ink);border:1px solid var(--violet-bd);background:rgba(155,135,245,.08);border-radius:5px;padding:2px 7px;">Pi</span>
+        </div>
+        <div style="font-size:11.5px;color:var(--tx-mut);margin-top:11px;line-height:1.4;">planner · executor · <span style="color:var(--violet-ink);">reviewer</span></div>
+      </div>
+      <div style="flex:1 1 230px;border:1px solid var(--bd1b);background:var(--surface1);border-radius:14px;padding:20px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;color:var(--eyebrow);text-transform:uppercase;">State labels</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;color:var(--faint2);border:1px solid var(--faint2);background:transparent;border-radius:5px;padding:2px 8px;">Inbox</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;color:var(--blue);border:1px solid var(--blue);border-radius:5px;padding:2px 8px;">Ready</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;color:var(--cyan);border:1px solid var(--cyan);border-radius:5px;padding:2px 8px;">In progress</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;color:var(--violet);border:1px solid var(--violet);border-radius:5px;padding:2px 8px;">Review</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;color:var(--amber);border:1px solid var(--amber);border-radius:5px;padding:2px 8px;">Done</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- issue card + node -->
+    <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:14px;">
+      <div style="flex:1 1 280px;border:1px solid var(--bd1b);background:var(--surface1);border-radius:14px;padding:20px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;color:var(--eyebrow);text-transform:uppercase;margin-bottom:16px;">Issue card · kanban</div>
+        <div style="border:1px solid var(--bd2b);border-left:2px solid var(--cyan);background:var(--surface2);border-radius:11px;padding:13px 14px;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--blue);">#44</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--tx-mut3);border:1px solid var(--bd4);border-radius:5px;padding:1px 7px;">refactor</span>
+          </div>
+          <div style="font-size:14px;font-weight:500;margin-top:9px;line-height:1.35;">Refactor pricing engine</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;flex-wrap:wrap;">
+            <div style="display:flex;gap:5px;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--tx-mut2);border:1px solid var(--bd3);background:var(--chip);border-radius:5px;padding:2px 7px;">Pi</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--tx-mut2);border:1px solid var(--bd3);background:var(--chip);border-radius:5px;padding:2px 7px;">Codex</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--violet-ink);border:1px solid var(--violet-bd);background:rgba(155,135,245,.08);border-radius:5px;padding:2px 7px;">Claude</span>
+            </div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--red);background:rgba(229,96,77,.12);border:1px solid var(--red-bd);border-radius:6px;padding:2px 8px;">✗ verify</span>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1 1 280px;border:1px solid var(--bd1b);background:var(--surface1);border-radius:14px;padding:20px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;color:var(--eyebrow);text-transform:uppercase;margin-bottom:16px;">Diagram nodes</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;">
+          <div style="border:1.5px solid var(--amber-bd);background:rgba(244,181,63,.06);border-radius:12px;padding:10px 15px;box-shadow:0 0 22px rgba(244,181,63,.12);"><div style="font-weight:600;font-size:15px;color:var(--tx0);">make verify</div><div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--gold);">exit 0 · the gate</div></div>
+          <div style="border:1.5px solid var(--violet-bd);background:var(--violet-surface);border-radius:12px;padding:10px 15px;"><div style="font-weight:600;font-size:15px;color:var(--tx0);">Reviewer</div><div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--violet-ink);">agent · judgment</div></div>
+          <div style="border:1.5px solid var(--bd4);background:var(--surface2);border-radius:12px;padding:10px 15px;"><div style="font-weight:600;font-size:15px;color:var(--tx0);">Dispatcher</div><div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--tx-mut3);">one writer</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- progress + code + verdict -->
+    <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:14px;">
+      <div style="flex:1 1 240px;border:1px solid var(--bd1b);background:var(--surface1);border-radius:14px;padding:20px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;color:var(--eyebrow);text-transform:uppercase;">Progress bar</div>
+        <div style="display:flex;height:8px;border-radius:5px;overflow:hidden;background:var(--track);margin-top:18px;gap:2px;">
+          <div style="width:17%;background:var(--faint2);"></div>
+          <div style="width:17%;background:var(--blue);"></div>
+          <div style="width:33%;background:var(--cyan);"></div>
+          <div style="width:16%;background:var(--violet);"></div>
+          <div style="width:17%;background:var(--amber);"></div>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--tx-mut);margin-top:11px;">inbox · ready · in progress · review · done</div>
+      </div>
+      <div style="flex:1 1 250px;border:1px solid var(--bd1b);background:var(--surface1);border-radius:14px;padding:20px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;color:var(--eyebrow);text-transform:uppercase;">Run stream</div>
+        <pre style="margin:14px 0 0;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;white-space:pre-wrap;color:var(--tx-mut3);background:var(--code-bg);border:1px solid var(--bd1);border-radius:10px;padding:13px;">{ "t":"gate", "result":<span style="color:var(--amber);">"exit 0"</span> }
+{ "t":"pr", "closes":42 }</pre>
+      </div>
+      <div style="flex:1 1 250px;border:1px solid var(--bd1b);background:var(--surface1);border-radius:14px;padding:20px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;color:var(--eyebrow);text-transform:uppercase;">Review verdict</div>
+        <pre style="margin:14px 0 0;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.7;white-space:pre-wrap;color:var(--violet-ink2);background:var(--violet-surface);border:1px solid var(--violet-bd2);border-radius:10px;padding:13px;">{ <span style="color:var(--violet)">"verdict"</span>: "changes",
+  <span style="color:var(--violet)">"reason"</span>:  "execution" }</pre>
+      </div>
+    </div>
+
+    <footer style="margin-top:60px;border-top:1px solid var(--bd0);padding-top:26px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--faint);">
+      <span>Loop Master · design system</span>
+      <span>nothing green until <span style="color:var(--amber);">exit 0</span></span>
+    </footer>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.state = { theme: ((typeof localStorage!=='undefined' && localStorage.getItem('cc-theme')) || 'dark') };
+  }
+  componentDidMount(){ this.applyTheme(this.state.theme); }
+  applyTheme(t){ try{ document.documentElement.setAttribute('data-cc-theme', t); localStorage.setItem('cc-theme', t); }catch(e){} }
+  toggleTheme(){ const t = this.state.theme==='dark'?'light':'dark'; this.setState({theme:t}); this.applyTheme(t); }
+
+  dot(c){ return { width:'11px', height:'11px', borderRadius:'3px', background:c, display:'inline-block', flex:'0 0 auto' }; }
+  sw(token, h){ return { height:(h||'58px'), background:'var('+token+')', borderBottom:'1px solid var(--bd1b)' }; }
+
+  renderVals(){
+    const semantics = [
+      { name:'verified', note:'make verify exit 0 — the mechanical floor. Amber is the only “green”.', dot:this.dot('var(--amber)') },
+      { name:'judgment', note:'AI review and the nightly grader. Reviewer and grader only.', dot:this.dot('var(--violet)') },
+      { name:'failed',   note:'Gate red — verify exited non-zero. Review is unreachable.', dot:this.dot('var(--red)') },
+      { name:'running',  note:'The dispatcher is executing a step or the gate right now.', dot:this.dot('var(--cyan)') },
+      { name:'structure',note:'Everything else — surfaces, borders, prose. Calm neutrals.', dot:this.dot('var(--tx-mut)') },
+    ];
+
+    const C = (token, dark, light, note) => ({ token, vals: dark+' · '+light, note, swatch: this.sw(token) });
+    const colorGroups = [
+      { title:'Accents — semantic', items:[
+        C('--amber','#f4b53f','#b87d10','verified · the gate'),
+        C('--red','#e5604d','#d23f29','failed · blocked'),
+        C('--violet','#9b87f5','#6d54e0','AI judgment'),
+        C('--cyan','#5fb3c9','#1f8fa8','running · active'),
+        C('--blue','#8aa6cc','#4f6f9e','issue ids · ready'),
+        C('--gold','#cbb27e','#8a6a28','blocked notes'),
+      ]},
+      { title:'Surfaces', items:[
+        C('--bg','#0a0c11','#f3f4f7','page'),
+        C('--surface1','#0d1117','#fbfcfd','panels'),
+        C('--surface2','#11151d','#ffffff','cards'),
+        C('--chip','#161c26','#edf0f5','chips · avatars'),
+        C('--code-bg','#0a0c11','#eef1f6','run stream'),
+        C('--track','#1a2130','#e6e9f0','progress track'),
+      ]},
+      { title:'Text', items:[
+        C('--tx0','#e7ebf2','#1b212b','primary'),
+        C('--tx2','#cdd6e3','#2b3340','strong'),
+        C('--tx-mut','#98a2b3','#586374','muted body'),
+        C('--tx-mut3','#8b94a4','#66707f','labels'),
+        C('--eyebrow','#707a89','#79828f','eyebrows'),
+        C('--faint','#6b7686','#8a93a1','captions'),
+      ]},
+      { title:'Borders', items:[
+        C('--bd1b','#1f2734','#e0e4ec','panel edge'),
+        C('--bd2b','#232b39','#d9dee7','hairline'),
+        C('--bd4','#2a3342','#ccd3df','chip edge'),
+        C('--amber-bd','#6f5520','#e6cd92','verified edge'),
+        C('--red-bd','#6e3128','#f0bdb1','failed edge'),
+        C('--violet-bd','#3a3160','#d6cbf2','judgment edge'),
+      ]},
+    ];
+
+    const ts = (size, weight, mono, color, ls) => ({ fontFamily: mono?"'JetBrains Mono',monospace":"'Geist',sans-serif", fontSize:size, fontWeight:weight, color:color||'var(--tx0)', letterSpacing:ls||'normal', lineHeight:1.15 });
+    const typeScale = [
+      { meta:'display / 48', sample:'Mechanical truth', style:ts('clamp(28px,4vw,44px)',600,false,'var(--tx0)','-.025em') },
+      { meta:'h2 / 32',      sample:'The two gates', style:ts('30px',600,false,'var(--tx0)','-.02em') },
+      { meta:'body / 17',    sample:'Only a passing build turns something green.', style:ts('17px',400,false,'var(--tx-mut)') },
+      { meta:'label / 12',   sample:'§02 · THE DISPATCHER', style:Object.assign(ts('12px',500,true,'var(--eyebrow)','.16em'),{textTransform:'uppercase'}) },
+      { meta:'code / 13',    sample:'$ make verify → exit 0', style:ts('13.5px',500,true,'var(--amber)') },
+    ];
+
+    const radii = [
+      { label:'5px chips', box:{ width:'52px', height:'40px', borderRadius:'5px', background:'var(--chip)', border:'1px solid var(--bd4)' } },
+      { label:'8px ctrl',  box:{ width:'52px', height:'40px', borderRadius:'8px', background:'var(--chip)', border:'1px solid var(--bd4)' } },
+      { label:'12px card', box:{ width:'52px', height:'40px', borderRadius:'12px', background:'var(--chip)', border:'1px solid var(--bd4)' } },
+      { label:'16px panel',box:{ width:'52px', height:'40px', borderRadius:'16px', background:'var(--chip)', border:'1px solid var(--bd4)' } },
+    ];
+
+    return {
+      onToggleTheme:()=>this.toggleTheme(), themeIcon: this.state.theme==='dark'?'\u2600 light':'\u263e dark',
+      semantics, colorGroups, typeScale, radii,
+    };
+  }
+}
+</script>
+</body>
+</html>
