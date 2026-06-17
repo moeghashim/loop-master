@@ -77,8 +77,9 @@ unblock, and what you already tried. For loop thrash or repeated red CI the disp
 
 | Label | Meaning |
 |---|---|
-| `exec:codex` / `claude` / `pi` / `amp` | Executor assignment — the active claim + lock for execution |
-| `review:codex` / `claude` / `pi` / `amp` | Reviewer assignment (reviewed shape only) |
+| `exec:<tool>` | Executor assignment — the active claim + lock (one per tool: codex, claude, cursor, pi, factory, amp) |
+| `review:<tool>` | Reviewer assignment (reviewed shape only; same six tools) |
+| `dispatch:auto` / `dispatch:confirm` | Dispatch mode for this issue, set by the interview (default: confirm) |
 | `agent:human` | A human is working it |
 | `run:active` | A run is in flight (lock mirror) |
 | `needs:cast` | Dispatcher refused: no executor assigned |
