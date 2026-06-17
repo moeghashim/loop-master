@@ -1,0 +1,71 @@
+<div style="background:#faf9f5;color:#2c2c2a;font-family:system-ui,-apple-system,sans-serif;line-height:1.6;padding:20px;max-width:760px;margin:0 auto">
+
+  <h2 style="font-weight:500;font-size:18px;margin:0 0 4px">1 · Per-issue flow — solo vs reviewed</h2>
+  <p style="font-size:14px;color:#5f5e5a;margin:0 0 12px">
+    The dispatcher writes the cast at triage. CI is the floor; the reviewer is added only on
+    the reviewed shape (a <code>review:</code> label). A red gate or an unapproved review sends
+    work back to the executor; you merge.
+  </p>
+  <pre class="mermaid">
+flowchart TD
+  T["Triage · dispatcher<br/>writes cast + shape"]:::orch --> X["Execute<br/>vendor app"]:::agent
+  X --> V{"CI · make verify<br/>required check"}:::mech
+  V -->|"non-zero"| FB["Fix or block"]:::fail
+  FB -.->|"after fix"| X
+  V -->|"exit 0"| Q{"review: label?"}:::orch
+  Q -->|"reviewed"| R["Reviewer<br/>vendor app · sign-off"]:::ai
+  Q -->|"solo"| M["You merge<br/>→ Done"]:::human
+  R -->|"changes"| X
+  R -->|"approve"| M
+  classDef orch fill:#FBEAF0,stroke:#D4537E,color:#72243E;
+  classDef agent fill:#F1EFE8,stroke:#888780,color:#2C2C2A;
+  classDef mech fill:#FAEEDA,stroke:#BA7517,color:#633806;
+  classDef ai fill:#FAECE7,stroke:#D85A30,color:#712B13;
+  classDef human fill:#E1F5EE,stroke:#1D9E75,color:#085041;
+  classDef fail fill:#FCEBEB,stroke:#E24B4A,color:#791F1F;
+  </pre>
+  <p style="font-size:13px;color:#5f5e5a;margin:8px 0 0">
+    <span style="color:#D4537E">■</span> dispatcher (Action) &nbsp;
+    <span style="color:#888780">■</span> executor &nbsp;
+    <span style="color:#BA7517">■</span> CI gate &nbsp;
+    <span style="color:#D85A30">■</span> reviewer &nbsp;
+    <span style="color:#1D9E75">■</span> you &nbsp;
+    <span style="color:#E24B4A">■</span> blocked / fail
+  </p>
+
+  <hr style="border:none;border-top:1px solid #d3d1c7;margin:28px 0">
+
+  <h2 style="font-weight:500;font-size:18px;margin:0 0 4px">2 · Sub-loop — the block relationship</h2>
+  <p style="font-size:14px;color:#5f5e5a;margin:0 0 12px">
+    An executor can spawn a child issue and pause on it. The child runs its own full loop;
+    on its merge an Action clears the parent's block, and the parent resumes.
+  </p>
+  <pre class="mermaid">
+flowchart TD
+  P["Parent loop<br/>executing"]:::agent --> B["Parent · blocked<br/>blocked-by #child"]:::fail
+  B -->|"spawn sub-issue"| C["Sub-loop #child<br/>own interview + gates"]:::sub
+  C -->|"merged → unblock (Action)"| RS["Parent · resumes"]:::agent
+  RS --> MG["Parent merged<br/>→ Done"]:::human
+  classDef agent fill:#F1EFE8,stroke:#888780,color:#2C2C2A;
+  classDef fail fill:#FCEBEB,stroke:#E24B4A,color:#791F1F;
+  classDef sub fill:#EEEDFE,stroke:#7F77DD,color:#3C3489;
+  classDef human fill:#E1F5EE,stroke:#1D9E75,color:#085041;
+  </pre>
+  <p style="font-size:13px;color:#5f5e5a;margin:8px 0 0">
+    <span style="color:#888780">■</span> parent / executor &nbsp;
+    <span style="color:#E24B4A">■</span> blocked &nbsp;
+    <span style="color:#7F77DD">■</span> sub-loop &nbsp;
+    <span style="color:#1D9E75">■</span> done
+  </p>
+
+</div>
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'base',
+  securityLevel: 'loose',
+  flowchart: { htmlLabels: true, curve: 'basis', nodeSpacing: 45, rankSpacing: 45 },
+  themeVariables: { fontFamily: 'system-ui, sans-serif', fontSize: '14px', lineColor: '#73726c' }
+});
+</script>
