@@ -1,5 +1,5 @@
 .PHONY: verify
 
 verify:
-	bash -n scripts/*.sh
+	@for f in scripts/*.sh; do bash -n "$$f" || exit 1; done
 	python3 scripts/check-markdown-links.py
