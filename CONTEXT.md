@@ -27,8 +27,12 @@ review? → merge. **One issue is one loop** — the words are interchangeable o
 ### Interview
 The **planning front-door** of a [loop](#loop) (the grill-with-docs method): it grills the
 work one question at a time, resolves terms against this file, verifies claims against the
-code, and writes the plan. Runs only when an issue needs planning (Inbox); a well-specified
-issue skips it and starts Ready.
+code, tags [difficulty](#difficulty), and writes the plan. Runs only when an issue needs
+planning (Inbox); a well-specified issue skips it and starts Ready.
+
+### Difficulty
+`s` / `m` / `l`, set by the [interview](#interview); a coarse effort/risk estimate the
+[dispatcher](#dispatcher) consumes. Distinct from `priority` (urgency).
 
 ### Dispatch mode
 Per-issue choice, **set at the [interview](#interview)**, for how the [dispatcher](#dispatcher)

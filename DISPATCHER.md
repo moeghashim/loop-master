@@ -36,13 +36,15 @@ converged-architecture diagram for the picture.
 
 Trigger: an issue enters **Ready** (to re-triage, move it back to Ready).
 
-Inputs, all from GitHub + `routing.json`: `type:*`, `priority:*`, and the candidate
-executor's confidence (`score` + sample size `n`) for `(agent × executor × work_type)`.
+Inputs, all from GitHub + `routing.json`: `type:*`, `priority:*` (urgency), `difficulty:*`
+(effort/risk), and the candidate executor's confidence (`score` + sample size `n`) for
+`(agent × executor × work_type)`.
 
 ```python
 executor = argmax_recent(eligible(work_type))          # exploit, with an explore epsilon
 reviewed = (priority in {"p0", "p1"}
             or work_type == "bug"
+            or difficulty == "l"
             or confidence(executor, work_type) is thin   # n < MIN_SAMPLE
             or low)                                       # score below threshold
 reviewer = argmax_recent(reviewer_role, work_type)       # a DIFFERENT tool, only if reviewed
@@ -157,7 +159,8 @@ and auto-assign vs propose-and-confirm.
 ## How this fits the repo
 
 - [scripts/labels.sh](scripts/labels.sh) — the converged label set (`exec:*`, `review:*`,
-  `run:active`, `needs:cast`, `needs:human`, `depth:1..3`, plus type/priority/`stage:blocked`).
+  `run:active`, `needs:cast`, `needs:human`, `depth:1..3`, plus type/difficulty/priority and
+  `stage:blocked`).
 - [.github/workflows/project-sync.yml](.github/workflows/project-sync.yml) — keep PR→Review and
   merge→Done; drop the redundant `agent:* → In Progress`. Actions 1–4 above are **to build**.
 - [AGENTS.md](AGENTS.md) — the per-role contracts (interview/planner, executor, reviewer).
