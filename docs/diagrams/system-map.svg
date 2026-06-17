@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 940" role="img" aria-labelledby="map-title map-desc" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <title id="map-title">System map</title>
+  <desc id="map-desc">GitHub is the source of truth. A dispatcher Action writes the cast labels; the assigned vendor app executes; CI is the gate; a reviewer signs off; you merge. After merge a nightly blinded grader turns outcomes into ratings and a routing table that shapes the dispatcher's next cast.</desc>
+  <defs>
+    <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9C9B96"/>
+    </marker>
+    <filter id="sh2" x="-20%" y="-20%" width="140%" height="170%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#1b1b18" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="840" height="940" fill="#ffffff"/>
+
+  <!-- spine edges (solid, down) -->
+  <g fill="none" stroke="#9C9B96" stroke-width="1.6" marker-end="url(#ah2)">
+    <line x1="215" y1="113" x2="215" y2="154"/>
+    <line x1="215" y1="229" x2="215" y2="270"/>
+    <line x1="215" y1="345" x2="215" y2="386"/>
+    <line x1="215" y1="461" x2="215" y2="502"/>
+    <line x1="215" y1="577" x2="215" y2="618"/>
+    <!-- learning loop (solid, up) -->
+    <line x1="645" y1="503" x2="645" y2="462"/>
+    <line x1="645" y1="387" x2="645" y2="346"/>
+    <!-- merged -> grader (elbow) -->
+    <polyline points="360,192 445,192 445,540 508,540"/>
+  </g>
+
+  <!-- routing -> dispatcher (dashed feedback) -->
+  <line x1="510" y1="308" x2="362" y2="308" fill="none" stroke="#9C9B96" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ah2)"/>
+
+  <!-- edge labels -->
+  <g font-size="12" fill="#6E6D67">
+    <text x="435" y="299" text-anchor="middle">confidence</text>
+    <text x="453" y="430">merged · nightly</text>
+  </g>
+
+  <!-- You -->
+  <rect x="70" y="40" width="290" height="72" rx="14" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.5" filter="url(#sh2)"/>
+  <text x="215" y="70" text-anchor="middle" font-size="16.5" font-weight="700" fill="#085041">You</text>
+  <text x="215" y="90" text-anchor="middle" font-size="12.5" fill="#1D9E75">triage · review · merge</text>
+
+  <!-- GitHub -->
+  <rect x="70" y="156" width="290" height="72" rx="14" fill="#E6F1FB" stroke="#378ADD" stroke-width="1.5" filter="url(#sh2)"/>
+  <text x="215" y="186" text-anchor="middle" font-size="16.5" font-weight="700" fill="#0C447C">GitHub</text>
+  <text x="215" y="206" text-anchor="middle" font-size="12.5" fill="#378ADD">issues · labels · board</text>
+
+  <!-- Dispatcher -->
+  <rect x="70" y="272" width="290" height="72" rx="14" fill="#FBEAF0" stroke="#D4537E" stroke-width="1.5" filter="url(#sh2)"/>
+  <text x="215" y="302" text-anchor="middle" font-size="16.5" font-weight="700" fill="#72243E">Dispatcher · Action</text>
+  <text x="215" y="322" text-anchor="middle" font-size="12.5" fill="#D4537E">writes the cast labels</text>
+
+  <!-- Executor -->
+  <rect x="70" y="388" width="290" height="72" rx="14" fill="#F1EFE8" stroke="#A6A59F" stroke-width="1.5" filter="url(#sh2)"/>
+  <text x="215" y="418" text-anchor="middle" font-size="16.5" font-weight="700" fill="#2C2C2A">Executor · vendor app</text>
+  <text x="215" y="438" text-anchor="middle" font-size="12.5" fill="#6B6A64">you can jump in</text>
+
+  <!-- CI -->
+  <rect x="70" y="504" width="290" height="72" rx="14" fill="#FAEEDA" stroke="#BA7517" stroke-width="1.5" filter="url(#sh2)"/>
+  <text x="215" y="534" text-anchor="middle" font-size="16.5" font-weight="700" fill="#633806">CI · make verify</text>
+  <text x="215" y="554" text-anchor="middle" font-size="12.5" fill="#BA7517">required · the gate</text>
+
+  <!-- Reviewer -->
+  <rect x="70" y="620" width="290" height="72" rx="14" fill="#FAECE7" stroke="#D85A30" stroke-width="1.5" filter="url(#sh2)"/>
+  <text x="215" y="650" text-anchor="middle" font-size="16.5" font-weight="700" fill="#712B13">Reviewer · vendor app</text>
+  <text x="215" y="670" text-anchor="middle" font-size="12.5" fill="#D85A30">reviewed shape only</text>
+
+  <!-- routing.json -->
+  <rect x="510" y="272" width="270" height="72" rx="14" fill="#E6F1FB" stroke="#378ADD" stroke-width="1.5" filter="url(#sh2)"/>
+  <text x="645" y="302" text-anchor="middle" font-size="16.5" font-weight="700" fill="#0C447C">routing.json</text>
+  <text x="645" y="322" text-anchor="middle" font-size="12.5" fill="#378ADD">shapes the next cast</text>
+
+  <!-- Ratings -->
+  <rect x="510" y="388" width="270" height="72" rx="14" fill="#E6F1FB" stroke="#378ADD" stroke-width="1.5" filter="url(#sh2)"/>
+  <text x="645" y="418" text-anchor="middle" font-size="16.5" font-weight="700" fill="#0C447C">Ratings</text>
+  <text x="645" y="438" text-anchor="middle" font-size="12.5" fill="#378ADD">agent × role × work</text>
+
+  <!-- Nightly grader -->
+  <rect x="510" y="504" width="270" height="72" rx="14" fill="#FAECE7" stroke="#D85A30" stroke-width="1.5" filter="url(#sh2)"/>
+  <text x="645" y="534" text-anchor="middle" font-size="16.5" font-weight="700" fill="#712B13">Nightly grader</text>
+  <text x="645" y="554" text-anchor="middle" font-size="12.5" fill="#D85A30">blinded · nightly</text>
+
+  <!-- legend -->
+  <g font-size="12" fill="#57564F">
+    <rect x="150" y="850" width="15" height="15" rx="4" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.3"/>
+    <text x="174" y="862">you</text>
+    <rect x="330" y="850" width="15" height="15" rx="4" fill="#E6F1FB" stroke="#378ADD" stroke-width="1.3"/>
+    <text x="354" y="862">GitHub · data</text>
+    <rect x="540" y="850" width="15" height="15" rx="4" fill="#FBEAF0" stroke="#D4537E" stroke-width="1.3"/>
+    <text x="564" y="862">dispatcher · Action</text>
+    <rect x="150" y="878" width="15" height="15" rx="4" fill="#F1EFE8" stroke="#A6A59F" stroke-width="1.3"/>
+    <text x="174" y="890">executor app</text>
+    <rect x="330" y="878" width="15" height="15" rx="4" fill="#FAEEDA" stroke="#BA7517" stroke-width="1.3"/>
+    <text x="354" y="890">CI gate</text>
+    <rect x="540" y="878" width="15" height="15" rx="4" fill="#FAECE7" stroke="#D85A30" stroke-width="1.3"/>
+    <text x="564" y="890">reviewer · grader</text>
+    <line x1="332" y1="912" x2="358" y2="912" stroke="#9C9B96" stroke-width="1.6" stroke-dasharray="5 4"/>
+    <text x="366" y="916">learning feedback</text>
+  </g>
+</svg>

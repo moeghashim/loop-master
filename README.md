@@ -4,6 +4,12 @@ Run several coding agents (Codex, Claude Code, Cursor, Pi, Factory, Amp) against
 without babysitting them. **GitHub is the single source of truth**: issues + labels are
 canonical, and the Project board is a derived view kept in sync by automation.
 
+## The system
+
+![System map: GitHub is the source of truth; a dispatcher Action writes the cast labels (it never executes), the assigned vendor app runs the work, CI is the gate, a reviewer signs off, you merge — and a nightly blinded grader feeds ratings and routing back into the next cast.](docs/diagrams/system-map.svg)
+
+GitHub is the source of truth; a dispatcher Action decides the cast and writes labels (it never executes); the assigned vendor app runs the work; CI is the gate; you merge. After merge, a nightly blinded grader turns outcomes into the routing that shapes the next cast.
+
 ## The one rule
 
 Nothing is ever "done" on an agent's word. Only a **mechanical signal** — a passing
@@ -32,6 +38,8 @@ Two pipeline shapes, chosen per issue by the dispatcher: **solo** (one tool end-
 **reviewed** (executor + an independent reviewer). The presence of a `review:` label *is* the
 shape.
 
+![Per-issue flow: triage to execute to the CI gate; a reviewed issue branches to an independent reviewer, a solo issue goes straight to your merge. Review and merge are reachable only on a green gate.](docs/diagrams/agent-flow.svg)
+
 ### Sub-loops
 
 An agent can spawn a **sub-loop** mid-loop — a child issue (GitHub sub-issue). The default
@@ -45,7 +53,7 @@ After merge, a nightly **blinded grader** scores the work into ratings (agent ×
 work-type) that feed a **routing table** (`routing.json`) — which drives the
 dispatcher's next cast and solo/reviewed call. Mostly exploit best-fit, sometimes explore.
 
-See the diagrams in [docs/diagrams/](docs/diagrams/).
+The source for both diagrams — plus standalone HTML versions — lives in [docs/diagrams/](docs/diagrams/).
 
 ## Repo layout
 
@@ -61,7 +69,7 @@ See the diagrams in [docs/diagrams/](docs/diagrams/).
 | [.github/workflows/verify.yml](.github/workflows/verify.yml) | Runs `make verify` on PRs (the required check). |
 | [.github/workflows/project-sync.yml](.github/workflows/project-sync.yml) | PR → board Status automation. |
 | `routing.json` | The routing table (cold-start: empty). |
-| [docs/diagrams/](docs/diagrams/) | `system-map.html`, `agent-flow.html` — open in a browser. |
+| [docs/diagrams/](docs/diagrams/) | `system-map.svg` / `agent-flow.svg` (the diagrams above) + `*.html` standalone versions. |
 
 ## Getting started
 
