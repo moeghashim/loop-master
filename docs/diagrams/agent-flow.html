@@ -1,0 +1,71 @@
+<div style="background:#faf9f5;color:#2c2c2a;font-family:system-ui,-apple-system,sans-serif;line-height:1.6;padding:20px;max-width:760px;margin:0 auto">
+
+  <h2 style="font-weight:500;font-size:18px;margin:0 0 4px">1 · Per-issue flow — the two gates</h2>
+  <p style="font-size:14px;color:#5f5e5a;margin:0 0 12px">
+    Mechanical gate first (a hard floor), then the AI sign-off on top of it, then your merge.
+    A red gate or an unapproved review sends work back to the executor.
+  </p>
+  <pre class="mermaid">
+flowchart TD
+  P["Plan<br/>planner agent"]:::agent --> X["Execute<br/>executor agent"]:::agent
+  X --> V{"make verify<br/>mechanical floor"}:::mech
+  V -->|"non-zero"| FB["Fix or block<br/>re-run, or block"]:::fail
+  FB -.->|"after fix"| X
+  V -->|"exit 0"| R{"Review sign-off<br/>reviewer agent"}:::ai
+  R -->|"not approved"| RC["Request changes"]:::ai
+  RC -.->|"back to executor"| X
+  R -->|"approved"| PR["Open PR<br/>board to Review"]:::auto
+  PR --> M["You merge<br/>board to Done"]:::human
+  classDef agent fill:#F1EFE8,stroke:#888780,color:#2C2C2A;
+  classDef auto fill:#F1EFE8,stroke:#888780,color:#2C2C2A;
+  classDef mech fill:#FAEEDA,stroke:#BA7517,color:#633806;
+  classDef ai fill:#FAECE7,stroke:#D85A30,color:#712B13;
+  classDef human fill:#E1F5EE,stroke:#1D9E75,color:#085041;
+  classDef fail fill:#FCEBEB,stroke:#E24B4A,color:#791F1F;
+  </pre>
+  <p style="font-size:13px;color:#5f5e5a;margin:8px 0 0">
+    <span style="color:#BA7517">■</span> mechanical gate &nbsp;
+    <span style="color:#D85A30">■</span> AI sign-off gate &nbsp;
+    <span style="color:#1D9E75">■</span> you &nbsp;
+    <span style="color:#E24B4A">■</span> blocked / fail &nbsp;
+    <span style="color:#888780">■</span> agent step
+  </p>
+
+  <hr style="border:none;border-top:1px solid #d3d1c7;margin:28px 0">
+
+  <h2 style="font-weight:500;font-size:18px;margin:0 0 4px">2 · Measurement &amp; routing loop</h2>
+  <p style="font-size:14px;color:#5f5e5a;margin:0 0 12px">
+    Triage picks the cast from the routing table (mostly best-fit, sometimes explore).
+    After merge, a blinded grader scores the work; ratings feed back into the table,
+    keyed by agent × role × work-type.
+  </p>
+  <pre class="mermaid">
+flowchart TD
+  RT[("Routing table<br/>best agent per role")]:::data --> TR["Triage: pick cast<br/>plus occasional explore"]:::human
+  TR --> PL["Run pipeline<br/>plan to exec to review to merge"]:::agent
+  PL --> GR{"Grader<br/>blinded, independent"}:::ai
+  GR --> RA[("Ratings<br/>agent, role, work-type")]:::data
+  RA -.->|"feeds next triage"| RT
+  classDef data fill:#E6F1FB,stroke:#378ADD,color:#0C447C;
+  classDef human fill:#E1F5EE,stroke:#1D9E75,color:#085041;
+  classDef agent fill:#F1EFE8,stroke:#888780,color:#2C2C2A;
+  classDef ai fill:#FAECE7,stroke:#D85A30,color:#712B13;
+  </pre>
+  <p style="font-size:13px;color:#5f5e5a;margin:8px 0 0">
+    <span style="color:#378ADD">■</span> data store &nbsp;
+    <span style="color:#1D9E75">■</span> your decision &nbsp;
+    <span style="color:#D85A30">■</span> AI grader &nbsp;
+    <span style="color:#888780">■</span> the pipeline
+  </p>
+
+</div>
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'base',
+  securityLevel: 'loose',
+  flowchart: { htmlLabels: true, curve: 'basis', nodeSpacing: 45, rankSpacing: 45 },
+  themeVariables: { fontFamily: 'system-ui, sans-serif', fontSize: '14px', lineColor: '#73726c' }
+});
+</script>

@@ -1,0 +1,201 @@
+<div style="background:#faf9f5;color:#2c2c2a;font-family:system-ui,-apple-system,sans-serif;line-height:1.6;padding:18px;max-width:880px;margin:0 auto">
+
+  <h2 style="font-weight:500;font-size:18px;margin:0 0 2px">The full system — interactive</h2>
+  <p style="font-size:13.5px;color:#5f5e5a;margin:0 0 12px">
+    Tap any node for what it does. Or press Play to trace one issue through the whole system.
+  </p>
+
+  <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px">
+    <button id="prev"  class="ctl">Prev</button>
+    <button id="play"  class="ctl ctl-primary">▶ Play trace</button>
+    <button id="next"  class="ctl">Next</button>
+    <button id="reset" class="ctl">Show all</button>
+    <span id="stepno" style="font-size:12.5px;color:#888780;margin-left:4px"></span>
+  </div>
+  <div id="caption" style="min-height:42px;font-size:14px;background:#fff;border:1px solid #e7e5dc;border-radius:10px;padding:10px 12px;margin:0 0 12px">
+    Tap a node, or press <b>Play trace</b> to walk through an issue's life.
+  </div>
+
+  <div id="map" class="diagram"></div>
+
+  <div style="font-size:12.5px;color:#5f5e5a;margin:12px 0 0;line-height:2">
+    <span style="color:#1D9E75">■</span> you &nbsp;
+    <span style="color:#7F77DD">■</span> Control Center &nbsp;
+    <span style="color:#D4537E">■</span> dispatcher &nbsp;
+    <span style="color:#BA7517">■</span> mechanical gate &nbsp;
+    <span style="color:#D85A30">■</span> AI judgment &nbsp;
+    <span style="color:#888780">■</span> agent &nbsp;
+    <span style="color:#378ADD">■</span> data / truth
+  </div>
+
+  <div id="detail" style="margin:14px 0 0;background:#fff;border:1px solid #e7e5dc;border-radius:12px;padding:14px 16px;font-size:14px">
+    <b style="font-weight:500">Tap a node</b><br/>
+    <span style="color:#5f5e5a">Its role, inputs and outputs, and the one rule that matters show up here.</span>
+  </div>
+</div>
+
+<style>
+  .ctl{font:inherit;font-size:13px;padding:6px 12px;border:1px solid #d3d1c7;background:#fff;color:#2c2c2a;border-radius:8px;cursor:pointer}
+  .ctl:hover{background:#f1efe8}
+  .ctl-primary{background:#2c2c2a;color:#faf9f5;border-color:#2c2c2a}
+  .ctl-primary:hover{background:#444441}
+  .diagram svg{max-width:100%;height:auto}
+  .diagram .node{cursor:pointer;transition:opacity .2s}
+  .diagram.focus .edgePaths path,.diagram.focus .edgeLabel{opacity:.1;transition:opacity .2s}
+  .diagram.focus .node{opacity:.18}
+  .diagram.focus .node.active{opacity:1}
+  .diagram .node.active rect,.diagram .node.active polygon,.diagram .node.active path,.diagram .node.active circle{stroke-width:3px}
+</style>
+
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({startOnLoad:false,theme:'base',securityLevel:'loose',
+  flowchart:{htmlLabels:true,curve:'basis',nodeSpacing:42,rankSpacing:52},
+  themeVariables:{fontFamily:'system-ui, sans-serif',fontSize:'14px',lineColor:'#73726c'}});
+
+const def = `flowchart TD
+  YOU["You<br/>triage · assign cast · review · merge"]:::human
+  CC["Control Center<br/>portfolio · project · needs-you lane"]:::app
+  GH[("GitHub<br/>issues · labels · board — source of truth")]:::data
+  DISP["Dispatcher<br/>one process: polls · advances state · runs the gate"]:::orch
+  GATE{"make verify<br/>mechanical gate"}:::mech
+  PLAN["Planner"]:::agent
+  EXEC["Executor"]:::agent
+  REV{"Reviewer<br/>approve / changes + reason"}:::ai
+  GRADER["Nightly grader<br/>blinded, independent"]:::ai
+  RATINGS[("Ratings")]:::data
+  ROUTE[("Routing table")]:::data
+  YOU -->|triage and cast| GH
+  YOU --> CC
+  CC -.->|reads board + run stream| GH
+  DISP <-->|reads board, writes Status| GH
+  DISP --> PLAN
+  DISP --> EXEC
+  DISP --> REV
+  DISP --> GATE
+  GATE -->|exit 0 required first| REV
+  EXEC -.->|NDJSON run stream| CC
+  REV -->|approve: open PR to Review| GH
+  REV -.->|changes: re-execute| EXEC
+  GH -->|merged issues, nightly| GRADER
+  GRADER --> RATINGS
+  RATINGS --> ROUTE
+  ROUTE -.->|informs cast picks| YOU
+  classDef human fill:#E1F5EE,stroke:#1D9E75,color:#085041;
+  classDef app fill:#EEEDFE,stroke:#7F77DD,color:#3C3489;
+  classDef data fill:#E6F1FB,stroke:#378ADD,color:#0C447C;
+  classDef orch fill:#FBEAF0,stroke:#D4537E,color:#72243E;
+  classDef mech fill:#FAEEDA,stroke:#BA7517,color:#633806;
+  classDef agent fill:#F1EFE8,stroke:#888780,color:#2C2C2A;
+  classDef ai fill:#FAECE7,stroke:#D85A30,color:#712B13;`;
+
+const KEYS=[
+  ["CC","Control Center"],["GH","GitHub"],["DISP","Dispatcher"],["GATE","verify"],
+  ["PLAN","Planner"],["EXEC","Executor"],["REV","Reviewer"],["GRADER","grader"],
+  ["RATINGS","Ratings"],["ROUTE","Routing"],["YOU","You"]
+];
+const DETAIL={
+  YOU:["You — operator","Triage issues, assign the cast from the routing table, review PRs, and merge. Your merge is the final gate; only you set Done."],
+  CC:["Control Center","Your window. Reads the board and the live run stream, and surfaces the needs-you lane — checkpoints, blocked, review-ready — across every project."],
+  GH:["GitHub — source of truth","Issues and labels are canonical; the Project board is a derived view. Every component reads and writes here. Nothing else holds state."],
+  DISP:["Dispatcher","One deterministic process. Polls the board, advances each issue's state machine, invokes the right agent, and runs the gate. The only writer of board Status. No agent talks to another agent — only to the dispatcher and the repo."],
+  GATE:["make verify — mechanical gate","Run by the dispatcher, not the agent. Exit 0 is the only green-able signal, so the reviewer is structurally unreachable until the gate is green."],
+  PLAN:["Planner","Produces the plan for the issue. One of the four agents, chosen at triage."],
+  EXEC:["Executor","Turns the plan into a diff on its own branch. Never claims the gate; emits the run stream while it works."],
+  REV:["Reviewer","Signs off on what verify can't see. Outputs approve, or changes with a required reason (execution | plan). Can send work back to the executor, never bless a red gate."],
+  GRADER:["Nightly grader","Blinded and independent — never an agent that worked the issue. Scores planner, executor, and reviewer from durable signals plus rubric judgment."],
+  RATINGS:["Ratings","Per-issue scores keyed by agent × role × work-type. Plan-tagged round-trips charge the planner, not the executor."],
+  ROUTE:["Routing table","Aggregated ratings. Drives the next triage: mostly best-fit, with occasional exploration to keep the table fresh."]
+};
+const ADJ={YOU:["GH","CC","ROUTE"],CC:["GH","EXEC","YOU"],GH:["YOU","CC","DISP","REV","GRADER"],
+  DISP:["GH","PLAN","EXEC","REV","GATE"],GATE:["DISP","REV"],PLAN:["DISP"],
+  EXEC:["DISP","GATE","CC","REV"],REV:["DISP","GATE","GH","EXEC"],
+  GRADER:["GH","RATINGS"],RATINGS:["GRADER","ROUTE"],ROUTE:["RATINGS","YOU"]};
+
+const TRACE=[
+  [["YOU","GH"],"You triage the issue and assign the cast — planner, executor, reviewer — from the routing table."],
+  [["DISP","GH"],"The dispatcher polls the board, picks up the issue, and owns every move from here on."],
+  [["DISP","PLAN"],"It invokes the planner, which writes and commits a plan."],
+  [["DISP","EXEC"],"Then the executor, which turns the plan into a diff on its branch."],
+  [["GATE"],"The dispatcher runs make verify itself. Exit 0 is the only thing that counts as green."],
+  [["GATE","REV"],"Only on a green gate is the reviewer invoked — it can never see a red gate."],
+  [["REV","EXEC"],"Changes requested? It loops back to the executor with a reason tag — capped, then escalates to you."],
+  [["REV","GH"],"On approval, the dispatcher opens the PR and the board moves to Review."],
+  [["EXEC","CC"],"Throughout, the executor's run stream feeds Control Center so you watch live."],
+  [["YOU","GH"],"You review and merge — the final gate. The issue is Done."],
+  [["GH","GRADER"],"That night, the blinded grader scores the merged work."],
+  [["GRADER","RATINGS","ROUTE"],"Scores become ratings (agent × role × work-type) and update the routing table."],
+  [["ROUTE","YOU"],"Which is what you read from next time you assign a cast. The loop is closed."]
+];
+
+const map={};
+const el=document.getElementById('map');
+const cap=document.getElementById('caption');
+const stepno=document.getElementById('stepno');
+const detail=document.getElementById('detail');
+
+(async()=>{
+  const {svg}=await mermaid.render('sysmap',def);
+  el.innerHTML=svg;
+  const nodes=[...el.querySelectorAll('g.node')];
+  for(const [key,kw] of KEYS){
+    const g=nodes.find(n=>n.dataset.k==null && n.textContent.includes(kw));
+    if(g){g.dataset.k=key;map[key]=g;g.addEventListener('click',()=>select(key));}
+  }
+  reset();
+})();
+
+function clearFocus(){
+  el.classList.remove('focus');
+  Object.values(map).forEach(g=>g.classList.remove('active'));
+}
+function focusKeys(keys){
+  el.classList.add('focus');
+  Object.values(map).forEach(g=>g.classList.remove('active'));
+  keys.forEach(k=>map[k]&&map[k].classList.add('active'));
+}
+function showDetail(key){
+  const d=DETAIL[key];
+  if(!d)return;
+  detail.innerHTML='<b style="font-weight:500">'+d[0]+'</b><br/><span style="color:#3d3d3a">'+d[1]+'</span>';
+}
+function select(key){
+  stop();i=-1;stepno.textContent='';
+  focusKeys([key,...(ADJ[key]||[])]);
+  map[key].classList.add('active');
+  showDetail(key);
+  cap.innerHTML='<b style="font-weight:500">'+DETAIL[key][0]+'</b> — highlighted with what it connects to.';
+}
+function reset(){
+  stop();i=-1;stepno.textContent='';
+  clearFocus();
+  cap.innerHTML='Tap a node, or press <b>Play trace</b> to walk through an issue\u2019s life.';
+}
+
+let i=-1, timer=null;
+function renderStep(){
+  const s=TRACE[i];
+  focusKeys(s[0]);
+  cap.innerHTML=s[1];
+  stepno.textContent='Step '+(i+1)+' / '+TRACE.length;
+  s[0].forEach(k=>DETAIL[k]&&0); // no-op
+  showDetail(s[0][s[0].length-1]);
+}
+function next(){ i=Math.min(i+1,TRACE.length-1); renderStep(); if(i===TRACE.length-1)stop(); }
+function prev(){ if(i<=0){return;} i--; renderStep(); }
+function play(){
+  if(timer){stop();return;}
+  if(i>=TRACE.length-1)i=-1;
+  document.getElementById('play').textContent='❚❚ Pause';
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  next();
+  if(reduce)return stop();
+  timer=setInterval(()=>{ if(i>=TRACE.length-1){stop();return;} next(); },2600);
+}
+function stop(){ if(timer){clearInterval(timer);timer=null;} document.getElementById('play').textContent='▶ Play trace'; }
+
+document.getElementById('next').onclick=()=>{stop();next();};
+document.getElementById('prev').onclick=()=>{stop();prev();};
+document.getElementById('play').onclick=play;
+document.getElementById('reset').onclick=reset;
+</script>

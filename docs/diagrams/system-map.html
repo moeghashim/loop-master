@@ -1,0 +1,74 @@
+<div style="background:#faf9f5;color:#2c2c2a;font-family:system-ui,-apple-system,sans-serif;line-height:1.6;padding:20px;max-width:820px;margin:0 auto">
+
+  <h2 style="font-weight:500;font-size:18px;margin:0 0 4px">The full system</h2>
+  <p style="font-size:14px;color:#5f5e5a;margin:0 0 14px">
+    You and Control Center sit on top. GitHub is the source of truth. One dispatcher drives
+    the agents through the two gates. After merge, the nightly loop turns outcomes into the
+    routing that shapes your next cast.
+  </p>
+
+  <pre class="mermaid">
+flowchart TD
+  YOU["You<br/>triage · assign cast · review · merge"]:::human
+  CC["Control Center<br/>portfolio · project · needs-you lane"]:::app
+  GH[("GitHub<br/>issues · labels · board — source of truth")]:::data
+  DISP["Dispatcher<br/>one process: polls · advances state · runs the gate"]:::orch
+  GATE{"make verify<br/>mechanical gate"}:::mech
+  PLAN["Planner"]:::agent
+  EXEC["Executor"]:::agent
+  REV{"Reviewer<br/>approve / changes + reason"}:::ai
+  GRADER["Nightly grader<br/>blinded, independent"]:::ai
+  RATINGS[("Ratings")]:::data
+  ROUTE[("Routing table")]:::data
+
+  YOU -->|triage and cast| GH
+  YOU --> CC
+  CC -.->|reads board + run stream| GH
+  DISP <-->|reads board, writes Status| GH
+  DISP --> PLAN
+  DISP --> EXEC
+  DISP --> REV
+  DISP --> GATE
+  GATE -->|exit 0 required first| REV
+  EXEC -.->|NDJSON run stream| CC
+  REV -->|approve: open PR to Review| GH
+  REV -.->|changes: re-execute| EXEC
+  GH -->|merged issues, nightly| GRADER
+  GRADER --> RATINGS
+  RATINGS --> ROUTE
+  ROUTE -.->|informs cast picks| YOU
+
+  classDef human fill:#E1F5EE,stroke:#1D9E75,color:#085041;
+  classDef app fill:#EEEDFE,stroke:#7F77DD,color:#3C3489;
+  classDef data fill:#E6F1FB,stroke:#378ADD,color:#0C447C;
+  classDef orch fill:#FBEAF0,stroke:#D4537E,color:#72243E;
+  classDef mech fill:#FAEEDA,stroke:#BA7517,color:#633806;
+  classDef agent fill:#F1EFE8,stroke:#888780,color:#2C2C2A;
+  classDef ai fill:#FAECE7,stroke:#D85A30,color:#712B13;
+  </pre>
+
+  <p style="font-size:13px;color:#5f5e5a;margin:12px 0 0;line-height:2">
+    <span style="color:#1D9E75">■</span> you &nbsp;
+    <span style="color:#7F77DD">■</span> Control Center &nbsp;
+    <span style="color:#D4537E">■</span> dispatcher &nbsp;
+    <span style="color:#BA7517">■</span> mechanical gate &nbsp;
+    <span style="color:#D85A30">■</span> AI judgment (review, grade) &nbsp;
+    <span style="color:#888780">■</span> agent work &nbsp;
+    <span style="color:#378ADD">■</span> data / truth
+  </p>
+  <p style="font-size:13px;color:#5f5e5a;margin:10px 0 0">
+    Solid arrows = work and writes. Dashed = observe / feed back. The per-issue gate detail
+    (plan → exec → verify → review loops) lives in the earlier flow diagram.
+  </p>
+
+</div>
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'base',
+  securityLevel: 'loose',
+  flowchart: { htmlLabels: true, curve: 'basis', nodeSpacing: 40, rankSpacing: 50 },
+  themeVariables: { fontFamily: 'system-ui, sans-serif', fontSize: '14px', lineColor: '#73726c' }
+});
+</script>
