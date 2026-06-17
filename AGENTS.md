@@ -25,8 +25,9 @@ branch / PR / `run:active` — **resume, don't duplicate**.
 ### Interview / planner — the front door
 Before an issue is Ready, the [interview](CONTEXT.md#interview) (grill-with-docs) turns a fuzzy
 issue into a plan: grill one question at a time, resolve terms against
-[CONTEXT.md](CONTEXT.md), verify claims against the code, and write the plan plus any
-CONTEXT.md / ADR updates. A well-specified issue skips the interview and starts at Ready.
+[CONTEXT.md](CONTEXT.md), verify claims against the code, tag `difficulty:s|m|l`, and write the
+plan plus any CONTEXT.md / ADR updates. A well-specified issue skips the interview and starts
+at Ready.
 
 ### Executor — `exec:<you>`
 1. Branch `agent/<you>/<issue#>-<slug>`. One issue per branch.
@@ -87,7 +88,8 @@ unblock, and what you already tried. For loop thrash or repeated red CI the disp
 | `stage:blocked` | Blocked; see latest comment — often carries `blocked-by:#N` |
 | `depth:1` / `2` / `3` | Sub-loop depth (root issues carry none) |
 | `type:bug` / `feature` / `chore` / `research` | Work type |
-| `priority:p0`..`p3` | Priority |
+| `difficulty:s` / `m` / `l` | Difficulty from the interview — small/medium/large effort/risk, distinct from priority |
+| `priority:p0`..`p3` | Priority / urgency, distinct from difficulty |
 
 Stage lives only as the board **Status** (Inbox → Ready → In Progress → Review → Done), which
 you never set. The presence of a `review:` label **is** the [solo](CONTEXT.md#solo)-vs-[reviewed](CONTEXT.md#reviewed)
