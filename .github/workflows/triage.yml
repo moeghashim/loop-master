@@ -1,0 +1,27 @@
+name: triage
+# Stage 1 — the dispatcher's triage decision, run manually (workflow_dispatch).
+# Decides the cast + solo/reviewed shape and writes labels / proposes them, then posts the
+# executor prompt. It decides and labels; it never runs an agent. A scheduled board-poll
+# replaces the manual trigger once the Project board is configured (see SETUP.md).
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue:
+        description: "Issue number to triage"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Triage issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash scripts/triage.sh --repo "${{ github.repository }}" --issue "${{ inputs.issue }}"
