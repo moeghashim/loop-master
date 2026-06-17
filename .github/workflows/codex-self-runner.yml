@@ -1,0 +1,195 @@
+name: codex-self-runner
+# Codex vendor adapter. Every tick, discover Codex-assigned executor/reviewer work,
+# lock it with run:active, let Codex do the code/review judgment, then perform the
+# deterministic GitHub writes.
+
+"on":
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: codex-self-runner-${{ github.repository }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    outputs:
+      executor_enabled: ${{ steps.check.outputs.executor_enabled }}
+      reviewer_enabled: ${{ steps.check.outputs.reviewer_enabled }}
+    steps:
+      - id: check
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CODEX_GITHUB_TOKEN: ${{ secrets.CODEX_GITHUB_TOKEN }}
+        run: |
+          executor_enabled=false
+          reviewer_enabled=false
+          if [ -n "$OPENAI_API_KEY" ]; then
+            reviewer_enabled=true
+            if [ -n "$CODEX_GITHUB_TOKEN" ]; then
+              executor_enabled=true
+            fi
+          fi
+          echo "executor_enabled=${executor_enabled}" >> "$GITHUB_OUTPUT"
+          echo "reviewer_enabled=${reviewer_enabled}" >> "$GITHUB_OUTPUT"
+          if [ "$executor_enabled" != "true" ]; then
+            echo "executor disabled: set OPENAI_API_KEY and CODEX_GITHUB_TOKEN secrets."
+          fi
+          if [ "$reviewer_enabled" != "true" ]; then
+            echo "reviewer disabled: set OPENAI_API_KEY secret."
+          fi
+
+  discover-executor:
+    runs-on: ubuntu-latest
+    needs: preflight
+    if: needs.preflight.outputs.executor_enabled == 'true'
+    outputs:
+      matrix: ${{ steps.discover.outputs.matrix }}
+      count: ${{ steps.discover.outputs.count }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: discover
+        env:
+          GH_TOKEN: ${{ secrets.CODEX_GITHUB_TOKEN }}
+        run: |
+          matrix="$(bash scripts/codex-self-runner.sh discover-exec --repo "${{ github.repository }}")"
+          count="$(jq '.include | length' <<<"$matrix")"
+          {
+            echo "matrix<<JSON"
+            echo "$matrix"
+            echo "JSON"
+            echo "count=${count}"
+          } >> "$GITHUB_OUTPUT"
+
+  executor:
+    runs-on: ubuntu-latest
+    needs: discover-executor
+    if: needs.discover-executor.outputs.count != '0'
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix: ${{ fromJson(needs.discover-executor.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Prepare branch and issue context
+        env:
+          GH_TOKEN: ${{ secrets.CODEX_GITHUB_TOKEN }}
+          ISSUE: ${{ matrix.issue }}
+          BRANCH: ${{ matrix.branch }}
+        run: |
+          git config user.name "Moe Ghashim"
+          git config user.email "mohanadgh@gmail.com"
+          bash scripts/codex-self-runner.sh prepare-branch --branch "$BRANCH"
+          bash scripts/codex-self-runner.sh write-exec-context \
+            --repo "${{ github.repository }}" \
+            --issue "$ISSUE"
+      - name: Run Codex executor
+        id: codex
+        uses: openai/codex-action@v1
+        continue-on-error: true
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          prompt-file: .github/codex/prompts/executor.md
+          output-file: .codex-run/codex-final.md
+          sandbox: danger-full-access
+          codex-args: '["--ask-for-approval","never"]'
+      - name: Finalize executor work
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.CODEX_GITHUB_TOKEN }}
+          ISSUE: ${{ matrix.issue }}
+          BRANCH: ${{ matrix.branch }}
+          TITLE: ${{ matrix.title }}
+          CODEX_OUTCOME: ${{ steps.codex.outcome }}
+        run: |
+          bash scripts/codex-self-runner.sh finalize-exec \
+            --repo "${{ github.repository }}" \
+            --issue "$ISSUE" \
+            --branch "$BRANCH" \
+            --title "$TITLE" \
+            --codex-outcome "$CODEX_OUTCOME"
+
+  discover-reviewer:
+    runs-on: ubuntu-latest
+    needs: preflight
+    if: needs.preflight.outputs.reviewer_enabled == 'true'
+    outputs:
+      matrix: ${{ steps.discover.outputs.matrix }}
+      count: ${{ steps.discover.outputs.count }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: discover
+        env:
+          GH_TOKEN: ${{ secrets.CODEX_REVIEW_GITHUB_TOKEN || github.token }}
+        run: |
+          matrix="$(bash scripts/codex-self-runner.sh discover-review --repo "${{ github.repository }}")"
+          count="$(jq '.include | length' <<<"$matrix")"
+          {
+            echo "matrix<<JSON"
+            echo "$matrix"
+            echo "JSON"
+            echo "count=${count}"
+          } >> "$GITHUB_OUTPUT"
+
+  reviewer:
+    runs-on: ubuntu-latest
+    needs: discover-reviewer
+    if: needs.discover-reviewer.outputs.count != '0'
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix: ${{ fromJson(needs.discover-reviewer.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ matrix.pr }}/merge
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Write review context
+        env:
+          GH_TOKEN: ${{ secrets.CODEX_REVIEW_GITHUB_TOKEN || github.token }}
+          PR: ${{ matrix.pr }}
+          ISSUE: ${{ matrix.issue }}
+        run: |
+          bash scripts/codex-self-runner.sh write-review-context \
+            --repo "${{ github.repository }}" \
+            --pr "$PR" \
+            --issue "$ISSUE"
+      - name: Run Codex reviewer
+        id: codex
+        uses: openai/codex-action@v1
+        continue-on-error: true
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          prompt-file: .github/codex/prompts/reviewer.md
+          output-file: .codex-run/review-decision.json
+          sandbox: read-only
+          codex-args: '["--ask-for-approval","never","--output-schema",".github/codex/schemas/review-decision.schema.json"]'
+      - name: Submit review
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.CODEX_REVIEW_GITHUB_TOKEN || github.token }}
+          PR: ${{ matrix.pr }}
+          ISSUE: ${{ matrix.issue }}
+          CODEX_OUTCOME: ${{ steps.codex.outcome }}
+        run: |
+          bash scripts/codex-self-runner.sh submit-review \
+            --repo "${{ github.repository }}" \
+            --pr "$PR" \
+            --issue "$ISSUE" \
+            --decision-file .codex-run/review-decision.json \
+            --codex-outcome "$CODEX_OUTCOME"

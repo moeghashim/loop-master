@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "decision": {
+      "type": "string",
+      "enum": ["approve", "request_changes"]
+    },
+    "reason_tag": {
+      "type": "string",
+      "enum": ["none", "execution", "plan"]
+    },
+    "body": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": ["decision", "reason_tag", "body"]
+}

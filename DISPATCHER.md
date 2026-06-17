@@ -164,4 +164,8 @@ and auto-assign vs propose-and-confirm.
 - [.github/workflows/project-sync.yml](.github/workflows/project-sync.yml) — keep PR→Review and
   merge→Done; drop the redundant `agent:* → In Progress`. Actions 1–4 above are **to build**.
 - [AGENTS.md](AGENTS.md) — the per-role contracts (interview/planner, executor, reviewer).
-- Per-vendor execution adapters (how each tool's automation is triggered by its label) — **to build**.
+- [.github/workflows/codex-self-runner.yml](.github/workflows/codex-self-runner.yml) —
+  Codex's scheduled vendor adapter: executor and reviewer loops run every 30 minutes from
+  `exec:codex` / `review:codex`, guarded by `run:active`, existing PR checks, prior-review
+  checks, and the `verify` gate.
+- Per-vendor execution adapters for the other tools — **to build**.

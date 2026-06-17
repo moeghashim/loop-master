@@ -42,8 +42,19 @@ gh variable set PROJECT_NUMBER --repo <owner/repo> --body "<PROJECT_NUMBER>"
 #    Use a fine-grained PAT or App token with scopes: project, repo
 gh secret set PROJECTS_TOKEN --repo <owner/repo> --body "<token>"
 
-# d) Ship the automation + contract
-#    Commit AGENTS.md, scripts/, and .github/workflows/project-sync.yml into the repo.
+# d) Codex self-runner secrets (for the scheduled Codex adapter)
+#    OPENAI_API_KEY powers openai/codex-action. CODEX_GITHUB_TOKEN must be a PAT/App
+#    token that can write branches, issues, and PRs; use this instead of GITHUB_TOKEN
+#    for executor PRs so follow-on pull_request CI runs.
+gh secret set OPENAI_API_KEY --repo <owner/repo> --body "<openai-api-key>"
+gh secret set CODEX_GITHUB_TOKEN --repo <owner/repo> --body "<repo-write-token>"
+
+# Optional: use a separate review identity. If absent, reviewer submissions use
+# github-actions[bot].
+gh secret set CODEX_REVIEW_GITHUB_TOKEN --repo <owner/repo> --body "<review-token>"
+
+# e) Ship the automation + contract
+#    Commit AGENTS.md, scripts/, and .github/workflows/ into the repo.
 ```
 
 ## 3. Your own CLI scope (once, locally)
@@ -55,10 +66,18 @@ chmod +x scripts/labels.sh scripts/gh-stage.sh
 
 ## 4. Dispatch model (how work actually flows)
 
-You triage Inbox → Ready (your judgment). To start an agent, **invoke that agent on a
-specific issue number** (CLI arg / prompt) — that out-of-band invocation is the dispatch
-and is what guarantees one agent per issue. The agent then adds `agent:<name>` (→ In
-Progress), opens a PR with `Closes #N` (→ Review), and you merge (→ Done).
+You triage Inbox → Ready (your judgment). The dispatcher assigns `exec:*` and, for reviewed
+work, `review:*`. The Codex adapter in `.github/workflows/codex-self-runner.yml` runs every
+30 minutes and picks up only Codex-owned work:
+
+- executor: open issues labeled `exec:codex`, with no open PR, not `run:active`, not blocked,
+  and not human-owned.
+- reviewer: open PRs whose closing issue is labeled `review:codex`, whose `verify` check is
+  green, and that the review token has not already reviewed.
+
+The adapter locks each selected issue with `run:active`, lets Codex make the code/review
+judgment, then clears the lock after opening the PR or submitting the review. It never reads
+or writes Project fields.
 
 Manual board moves (e.g. Inbox→Ready, or pulling something back) go through the one
 entry point:

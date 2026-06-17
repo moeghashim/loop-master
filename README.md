@@ -60,6 +60,7 @@ See the diagrams in [docs/diagrams/](docs/diagrams/).
 | [Makefile](Makefile) | `make verify` — the mechanical gate. |
 | [.github/workflows/verify.yml](.github/workflows/verify.yml) | Runs `make verify` on PRs (the required check). |
 | [.github/workflows/project-sync.yml](.github/workflows/project-sync.yml) | PR → board Status automation. |
+| [.github/workflows/codex-self-runner.yml](.github/workflows/codex-self-runner.yml) | Scheduled Codex adapter for `exec:codex` and `review:codex` work. |
 | `routing.json` | The routing table (cold-start: empty). |
 | [docs/diagrams/](docs/diagrams/) | `system-map.html`, `agent-flow.html` — open in a browser. |
 
@@ -68,14 +69,15 @@ See the diagrams in [docs/diagrams/](docs/diagrams/).
 Follow [SETUP.md](SETUP.md): create the Project (Status options
 `Inbox / Ready / In Progress / Review / Done`), wire its built-in workflows, then per repo run
 `scripts/labels.sh <owner/repo>`, set `PROJECT_OWNER` / `PROJECT_NUMBER` (variables) and
-`PROJECTS_TOKEN` (secret), and make `verify` a required check on the default branch.
+`PROJECTS_TOKEN` (secret), `OPENAI_API_KEY` / `CODEX_GITHUB_TOKEN` for the Codex adapter,
+and make `verify` a required check on the default branch.
 
 ## Status
 
 Built: the contract + vocabulary, the converged dispatcher spec, the label set, the
-`make verify` gate (required on `main`), board automation, and the routing scaffold. The first
-loop has been driven end-to-end by hand (Codex executing, Claude reviewing). **Next:** Stage 1
-— automating the triage Action and the per-vendor execution adapters.
+`make verify` gate (required on `main`), board automation, the routing scaffold, the scheduled
+triage poll, and the Codex self-runner adapter. The first loop has been driven end-to-end by
+hand (Codex executing, Claude reviewing). **Next:** adapters for the remaining vendor tools.
 
 ---
 
