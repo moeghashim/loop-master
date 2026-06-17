@@ -28,7 +28,14 @@ done
 
 here="$(cd "$(dirname "$0")" && pwd)"
 
-items="$(gh project item-list "$NUMBER" --owner "$OWNER" --format json --limit 500)"
+# Address the project as @me (the token's own user). The login form (--owner "$OWNER")
+# hits gh's "unknown owner type" resolution error, notably with fine-grained tokens; @me
+# resolves via `viewer` and sidesteps it. (Org-owned projects would pass the org login +
+# a token with org project access.)
+if ! items="$(gh project item-list "$NUMBER" --owner "@me" --format json --limit 500 2>&1)"; then
+  die "could not read project #${NUMBER} (owner ${OWNER}). gh said: ${items}
+hint: PROJECTS_TOKEN must be a CLASSIC PAT with 'project' + 'repo' scopes (fine-grained tokens fail here)."
+fi
 total="$(printf '%s' "$items" | jq '.items | length')"
 
 # Open issues in this repo at Status=Ready. Match the repo via content.url (reliable).
