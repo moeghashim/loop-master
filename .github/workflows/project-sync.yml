@@ -1,0 +1,65 @@
+name: project-sync
+# The Project board is a DERIVED VIEW. This workflow keeps it in sync from canonical
+# labels + PR events, routing every Status write through scripts/gh-stage.sh (the single
+# Projects API entry point).
+#
+# Merge -> Done and Closed -> Done are handled by the Project's built-in default
+# workflows (configured once in the UI), NOT here — see SETUP.md.
+#
+# Per-repo configuration (see SETUP.md):
+#   Repo VARIABLES: PROJECT_OWNER, PROJECT_NUMBER
+#   Repo SECRET:    PROJECTS_TOKEN  (PAT or GitHub App token with scopes: project, repo)
+
+"on":
+  issues:
+    types: [labeled]
+  pull_request:
+    types: [opened, ready_for_review]   # finding E: NOT on merge/close
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  claim-to-in-progress:
+    # Option A: adding an agent:* label IS the claim; automation moves the board.
+    if: github.event_name == 'issues' && startsWith(github.event.label.name, 'agent:')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Move issue to In Progress
+        env:
+          GH_TOKEN: ${{ secrets.PROJECTS_TOKEN }}
+        run: |
+          bash scripts/gh-stage.sh \
+            --owner   "${{ vars.PROJECT_OWNER }}" \
+            --project "${{ vars.PROJECT_NUMBER }}" \
+            --url     "${{ github.event.issue.html_url }}" \
+            --status  "In Progress"
+
+  pr-to-review:
+    # A PR that closes an issue, when opened/ready, sends that issue to Review.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Move closing-issues to Review
+        env:
+          GH_TOKEN: ${{ secrets.PROJECTS_TOKEN }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY:  ${{ github.event.pull_request.body }}
+          REPO:     ${{ github.repository }}
+        run: |
+          # Same-repo closing keywords: closes/fixes/resolves #N. (Cross-repo refs skipped.)
+          refs="$(printf '%s\n%s\n' "$PR_TITLE" "$PR_BODY" \
+            | grep -oiE '(close[sd]?|fix(e[sd])?|resolve[sd]?)[: ]+#[0-9]+' \
+            | grep -oE '[0-9]+' | sort -u || true)"
+          if [ -z "$refs" ]; then echo "no closing refs; nothing to do"; exit 0; fi
+          for n in $refs; do
+            bash scripts/gh-stage.sh \
+              --owner   "${{ vars.PROJECT_OWNER }}" \
+              --project "${{ vars.PROJECT_NUMBER }}" \
+              --url     "https://github.com/${REPO}/issues/${n}" \
+              --status  "Review"
+          done
