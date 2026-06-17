@@ -1,20 +1,22 @@
 name: project-sync
-# The Project board is a DERIVED VIEW. This workflow keeps it in sync from canonical
-# labels + PR events, routing every Status write through scripts/gh-stage.sh (the single
-# Projects API entry point).
+# The Project board is a DERIVED VIEW. This workflow keeps it in sync from PR events,
+# routing every Status write through scripts/gh-stage.sh (the single Projects API entry point).
 #
-# Merge -> Done and Closed -> Done are handled by the Project's built-in default
-# workflows (configured once in the UI), NOT here — see SETUP.md.
+# Converged model (see DISPATCHER.md):
+#   - In Progress is set by the triage dispatcher Action (to build) — NOT here. The old
+#     `agent:* -> In Progress` automation is gone: the agent:* claim labels were replaced
+#     by exec:* / review:*.
+#   - PR opened/ready -> Review is handled here.
+#   - Merge -> Done and Closed -> Done are the Project's built-in default workflows
+#     (configured once in the UI), NOT here — see SETUP.md.
 #
 # Per-repo configuration (see SETUP.md):
 #   Repo VARIABLES: PROJECT_OWNER, PROJECT_NUMBER
 #   Repo SECRET:    PROJECTS_TOKEN  (PAT or GitHub App token with scopes: project, repo)
 
 "on":
-  issues:
-    types: [labeled]
   pull_request:
-    types: [opened, ready_for_review]   # finding E: NOT on merge/close
+    types: [opened, ready_for_review]   # NOT on merge/close
 
 permissions:
   contents: read
@@ -22,22 +24,6 @@ permissions:
   pull-requests: read
 
 jobs:
-  claim-to-in-progress:
-    # Option A: adding an agent:* label IS the claim; automation moves the board.
-    if: github.event_name == 'issues' && startsWith(github.event.label.name, 'agent:')
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Move issue to In Progress
-        env:
-          GH_TOKEN: ${{ secrets.PROJECTS_TOKEN }}
-        run: |
-          bash scripts/gh-stage.sh \
-            --owner   "${{ vars.PROJECT_OWNER }}" \
-            --project "${{ vars.PROJECT_NUMBER }}" \
-            --url     "${{ github.event.issue.html_url }}" \
-            --status  "In Progress"
-
   pr-to-review:
     # A PR that closes an issue, when opened/ready, sends that issue to Review.
     if: github.event_name == 'pull_request'
