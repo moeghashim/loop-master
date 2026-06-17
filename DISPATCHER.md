@@ -85,7 +85,11 @@ Each tool acts only on **its own** `exec:` / `review:` label (assignment-based d
 even with four vendor automations live, exactly one touches an issue — the label is the lock,
 set once at triage, so there is no claim race. Work runs in that vendor's app, so you can open
 it and take over the live session. `run:active` mirrors the in-flight lock; the idempotency
-rule (resume, don't duplicate) absorbs a double-fire.
+rule (resume, don't duplicate) absorbs a double-fire. The lock has a release: the worker
+clears `run:active` when it finishes or fails, and a stale `run:active` past `RUN_TIMEOUT`
+with no resulting PR/review is **reaped** (lock cleared, item retried) so a dead run can't
+wedge an issue. The local vendor runners in [docs/automation/](docs/automation/) implement
+this.
 
 ## Sub-loops
 
@@ -148,13 +152,14 @@ keeps the table fresh and notices when a new model version improves.
 - Review and merge are unreachable until CI is green (structural, via the required check).
 - Done is only ever a merge/close — no agent and no Action sets Done.
 - Exactly one tool per issue per role (the assignment label is the lock).
+- A dead run can't wedge an issue: `run:active` is released on finish/fail and reaped past `RUN_TIMEOUT`.
 - A parent loop can't merge ahead of an open child (Action 4).
 - Every review rejection carries a reason tag (`execution` | `plan`), or it is re-requested.
 
 ## Knobs left for you
 
-`MAX_DEPTH`, `MIN_SAMPLE`, explore epsilon, `MAX_CHILDREN`, `MAX_INFLIGHT`, the grader rubric,
-and auto-assign vs propose-and-confirm.
+`MAX_DEPTH`, `MIN_SAMPLE`, explore epsilon, `MAX_CHILDREN`, `MAX_INFLIGHT`, `RUN_TIMEOUT`, the
+grader rubric, and auto-assign vs propose-and-confirm.
 
 ## How this fits the repo
 
